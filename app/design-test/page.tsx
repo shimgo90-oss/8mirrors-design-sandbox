@@ -170,7 +170,7 @@ export default function DesignTest() {
             Join the waitlist
           </h2>
           <p className="text-center text-mid-gray mb-10" style={{ lineHeight: 1.55 }}>
-            We'll send one quiet email when we're ready.
+            We&apos;ll send one quiet email when we&apos;re ready.
           </p>
 
           <form
