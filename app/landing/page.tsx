@@ -103,7 +103,7 @@ function RollingColumn({ snap }: { snap: 1 | 2 }) {
 
 function Hero() {
   return (
-    <section className="snap-start flex flex-col items-center justify-center px-5 py-10 text-center" style={{ minHeight: "100svh" }}>
+    <section className="snap-start flex flex-col items-center justify-center px-5 text-center" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 140 }}>
       {/* rolling animation — sits above the coach profile */}
       <div className="rolling-mask w-full" style={{ maxWidth: 460 }}>
         <div className="grid grid-cols-3 gap-3.5 overflow-visible" style={{ height: 154 }}>
@@ -264,7 +264,7 @@ function HowItWorks() {
   const cards = [<DiagnosisCard key="d" />, <KeywordsCard key="k" />, <RoutineCard key="r" />];
 
   return (
-    <section className="snap-start flex flex-col items-center justify-center px-5 py-12 text-center" style={{ minHeight: "100svh" }}>
+    <section className="snap-start flex flex-col items-center justify-center px-5 text-center" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 140 }}>
       <Eyebrow>WHAT YOU GET</Eyebrow>
       <h2
         key={step}
@@ -523,19 +523,15 @@ function Glimpse({ children, max = 420, boxed = false }: { children: React.React
 
 type Panel = { id: string; num: string; title: string; message: string; boxed?: boolean; Visual: () => React.ReactElement };
 
-function ReportPanel({ panel }: { panel: Panel }) {
-  const { num, title, message, boxed, Visual } = panel;
+function ReportPanel({ panel, panelRef }: { panel: Panel; panelRef: (el: HTMLElement | null) => void }) {
+  const { boxed, Visual } = panel;
   return (
-    <section className="snap-start flex flex-col justify-center px-5 py-12" style={{ minHeight: "100svh" }}>
-      <Glimpse max={boxed ? 380 : 420} boxed={boxed}><Visual /></Glimpse>
-      <div className="mt-6 flex items-start gap-3">
-        <SuminAvatar size={52} />
-        <div className="flex-1">
-          <div className="text-mid-gray" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.1em" }}>{num} · SUMIN, YOUR SKIN COACH</div>
-          <h3 className="font-display text-midnight mt-0.5" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.15 }}>{title}</h3>
-          <p className="text-midnight mt-1" style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.45 }}>{message}</p>
-        </div>
-      </div>
+    <section
+      ref={panelRef}
+      className="snap-start flex flex-col justify-center px-5"
+      style={{ minHeight: "100svh", paddingTop: 72, paddingBottom: 168 }}
+    >
+      <Glimpse max={boxed ? 440 : 480} boxed={boxed}><Visual /></Glimpse>
     </section>
   );
 }
@@ -548,19 +544,183 @@ const REPORT_PANELS: Panel[] = [
   { id: "final-message", num: "05", title: "Final Message", message: "And I'm with you through the whole journey — not just day one.", boxed: true, Visual: FinalMessageVisual },
 ];
 
+/* ───────────────────────── Fixed chrome: header, coach bubble, buy bar ───────────────────────── */
+
+const PAYPAL_URL = "https://www.paypal.com/ncp/payment/NFWM2BSB77C86";
+
+function Header() {
+  return (
+    <header className="fixed top-0 inset-x-0 z-50">
+      <div
+        className="mx-auto flex items-center justify-between px-4"
+        style={{ maxWidth: 480, height: 52, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", borderBottom: "1px solid #eee" }}
+      >
+        <Image src="/logo.png" alt="8mirrors" width={76} height={18} unoptimized priority style={{ height: 18, width: "auto" }} />
+        <button type="button" aria-label="Menu" className="-mr-2 p-2">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
+    </header>
+  );
+}
+
+// Fixed expert area — only the text swaps per section (sits just above the buy bar).
+function CoachBubble({ num, title, message, visible }: { num: string; title: string; message: string; visible: boolean }) {
+  return (
+    <div className="fixed left-1/2 z-40 w-full px-4" style={{ bottom: 100, maxWidth: 480, transform: "translateX(-50%)", pointerEvents: "none" }}>
+      <div className="transition-all duration-300" style={{ opacity: visible ? 1 : 0, transform: `translateY(${visible ? 0 : 10}px)` }}>
+        <div className="flex items-end gap-2.5">
+          <SuminAvatar size={48} />
+          <div className="relative rounded-[16px] rounded-bl-md bg-white px-3.5 py-2.5" style={{ boxShadow: "0 6px 16px #2228331f, 0 12px 30px #22283326" }}>
+            <span className="absolute -left-[5px] bottom-3.5 h-2.5 w-2.5 rotate-45 bg-white" aria-hidden />
+            <div key={title} className="guide-bar-enter">
+              <div className="text-mid-gray" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.06em" }}>{num} · SUMIN, YOUR SKIN COACH</div>
+              <div className="font-display text-midnight" style={{ fontSize: 16, fontWeight: 500, lineHeight: 1.2 }}>{title}</div>
+              <div className="text-mid-gray mt-0.5" style={{ fontSize: 13, fontWeight: 400, lineHeight: 1.35 }}>{message}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="9" stroke="#111" strokeWidth="2" />
+      <path d="M12 11v5M12 7.4h.01" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function HowItWorksSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const labelCss: React.CSSProperties = { fontSize: 12, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" };
+  return (
+    <div
+      className={`fixed inset-0 z-[60] mx-auto transition-opacity duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      style={{ maxWidth: 480 }}
+    >
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} aria-hidden />
+      <div
+        className={`absolute bottom-0 inset-x-0 bg-white rounded-t-3xl overflow-y-auto transition-transform duration-300 ease-out ${open ? "translate-y-0" : "translate-y-full"}`}
+        style={{ maxHeight: "88vh" }}
+      >
+        <div className="sticky top-0 bg-white pt-3 pb-2 flex justify-center"><div className="w-12 rounded-full bg-neutral-200" style={{ height: 6 }} /></div>
+        <div className="flex flex-col gap-6 px-6 pb-8 pt-3">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-3">
+              <span className="font-display text-midnight" style={{ fontSize: 36, lineHeight: 1, letterSpacing: "-0.02em" }}>$9.99</span>
+              <span className="text-mid-gray line-through" style={{ fontSize: 14 }}>$24.99</span>
+              <span className="text-midnight" style={{ background: "var(--color-lumen-lime)", borderRadius: 4, padding: "2px 8px", fontSize: 12, fontWeight: 700, lineHeight: 1 }}>60% OFF</span>
+            </div>
+            <p className="text-mid-gray" style={{ fontSize: 14 }}>Skin Analysis &amp; Custom Routine — Phase 1</p>
+          </div>
+          <div className="h-px bg-neutral-200" />
+          <div className="flex flex-col gap-3">
+            <h3 className="text-mid-gray" style={labelCss}>What you get</h3>
+            <ul className="flex flex-col gap-3">
+              {[["📋", "Detailed skin analysis report"], ["✨", "Custom AM & PM routine"], ["👩‍💼", "2 weeks of online skin coaching directly from our team"]].map(([e, t]) => (
+                <li key={t} className="flex items-start gap-3 text-midnight" style={{ fontSize: 16, lineHeight: 1.35 }}>
+                  <span style={{ fontSize: 20, lineHeight: 1 }}>{e}</span><span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="h-px bg-neutral-200" />
+          <div className="flex flex-col gap-3">
+            <h3 className="text-mid-gray" style={labelCss}>How it works</h3>
+            <ol className="flex flex-col gap-3">
+              {[["1", "Upload photos of your skin"], ["2", "Sumin — Korean skin expert & 8mirrors CEO — analyzes your skin"], ["3", "Receive your custom routine by email — 4 to 5 business days"]].map(([n, t]) => (
+                <li key={n} className="flex items-start gap-3 text-midnight" style={{ fontSize: 16, lineHeight: 1.35 }}>
+                  <span className="flex shrink-0 items-center justify-center rounded-full text-midnight" style={{ width: 24, height: 24, fontSize: 12, fontWeight: 600, background: "var(--color-mirror-cyan-subtle)" }}>{n}</span>
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <p className="text-center text-mid-gray" style={{ fontSize: 12, lineHeight: 1.6 }}>Payment via PayPal or credit card · Delivered to your email</p>
+          <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="rounded-lg px-6 py-4 text-center text-midnight" style={{ fontSize: 16, fontWeight: 700, background: "var(--color-mirror-cyan)", boxShadow: "var(--shadow-card)" }}>
+            Continue to PayPal · $9.99
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BuyBar() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div className="fixed inset-x-0 bottom-0 z-50 pointer-events-none">
+        <div className="mx-auto w-full bg-white pointer-events-auto" style={{ maxWidth: 480, borderTop: "1px solid #e0e0e0", boxShadow: "0 -4px 16px rgba(0,0,0,0.06)" }}>
+          <div className="flex items-center justify-center gap-2 px-4 pt-3 text-mid-gray" style={{ fontSize: 12 }}>
+            <span className="line-through">$24.99</span>
+            <span className="text-midnight" style={{ fontSize: 16, fontWeight: 600 }}>$9.99</span>
+            <span className="text-midnight" style={{ background: "var(--color-lumen-lime)", borderRadius: 4, padding: "2px 6px", fontSize: 10, fontWeight: 700, lineHeight: 1 }}>60% OFF</span>
+            <span aria-hidden>·</span>
+            <span>4–5 day delivery</span>
+          </div>
+          <div className="flex gap-2 px-4 pt-2" style={{ paddingBottom: 16 }}>
+            <button type="button" onClick={() => setOpen(true)} className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white px-4 py-3 text-midnight" style={{ fontSize: 14, fontWeight: 600, boxShadow: "var(--shadow-card)" }}>
+              <InfoIcon /> How it works
+            </button>
+            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="flex flex-1 items-center justify-center rounded-lg px-4 py-3 text-midnight" style={{ fontSize: 14, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
+              Buy now
+            </a>
+          </div>
+        </div>
+      </div>
+      <HowItWorksSheet open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
 /* ───────────────────────── Page ───────────────────────── */
 
 export default function Landing() {
+  const [active, setActive] = useState(0);
+  const [coachVisible, setCoachVisible] = useState(false);
+  const refs = useRef<(HTMLElement | null)[]>([]);
+
+  useEffect(() => {
+    const shown = new Set<Element>();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const idx = refs.current.findIndex((r) => r === e.target);
+          if (e.isIntersecting) {
+            shown.add(e.target);
+            if (idx >= 0) setActive(idx);
+          } else {
+            shown.delete(e.target);
+          }
+        });
+        setCoachVisible(shown.size > 0);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+    refs.current.forEach((r) => r && obs.observe(r));
+    return () => obs.disconnect();
+  }, []);
+
+  const a = REPORT_PANELS[active];
+
   return (
-    <main
-      className="mx-auto bg-white snap-y snap-mandatory"
-      style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}
-    >
-      <Hero />
-      <HowItWorks />
-      {REPORT_PANELS.map((p) => (
-        <ReportPanel key={p.id} panel={p} />
-      ))}
-    </main>
+    <>
+      <Header />
+      <main className="mx-auto bg-white snap-y snap-mandatory" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}>
+        <Hero />
+        <HowItWorks />
+        {REPORT_PANELS.map((p, i) => (
+          <ReportPanel key={p.id} panel={p} panelRef={(el) => { refs.current[i] = el; }} />
+        ))}
+      </main>
+      <CoachBubble num={a.num} title={a.title} message={a.message} visible={coachVisible} />
+      <BuyBar />
+    </>
   );
 }
