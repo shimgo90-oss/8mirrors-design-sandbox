@@ -501,39 +501,28 @@ function FinalMessageVisual() {
 /* ───────────────────────── Report panel (title → Sumin bubble → reference) ───────────────────────── */
 
 function ReportPanel({
-  num,
-  title,
   children,
   panelRef,
 }: {
-  num: string;
-  title: string;
   children: React.ReactNode;
   panelRef: (el: HTMLElement | null) => void;
 }) {
   return (
-    <section ref={panelRef} className="snap-start flex flex-col justify-center px-5 py-14" style={{ minHeight: "100svh" }}>
-      <div className="text-center">
-        <SectionNum n={num} />
-        <h3 className="font-display text-midnight mt-1" style={{ fontSize: 28, fontWeight: 500 }}>{title}</h3>
+    <section ref={panelRef} className="snap-start flex flex-col justify-start px-5 pt-14" style={{ minHeight: "100svh" }}>
+      {/* the real report shown as a reference glimpse (sits near the top; title + coach bubble live at the bottom) */}
+      <div className="text-center text-mid-gray mb-3" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.2em" }}>
+        FROM YOUR FULL REPORT
       </div>
-
-      {/* the real report shown as a reference glimpse */}
-      <div className="mt-7">
-        <div className="text-center text-mid-gray mb-3" style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.2em" }}>
-          FROM YOUR FULL REPORT
-        </div>
-        <div
-          className="relative rounded-2xl border border-neutral-200 bg-[#fafafa] px-4 pt-4 overflow-hidden"
-          style={{
-            maxHeight: 360,
-            pointerEvents: "none",
-            WebkitMaskImage: "linear-gradient(to bottom, #000 74%, transparent)",
-            maskImage: "linear-gradient(to bottom, #000 74%, transparent)",
-          }}
-        >
-          {children}
-        </div>
+      <div
+        className="relative rounded-2xl border border-neutral-200 bg-[#fafafa] px-4 pt-4 overflow-hidden"
+        style={{
+          maxHeight: 380,
+          pointerEvents: "none",
+          WebkitMaskImage: "linear-gradient(to bottom, #000 76%, transparent)",
+          maskImage: "linear-gradient(to bottom, #000 76%, transparent)",
+        }}
+      >
+        {children}
       </div>
     </section>
   );
@@ -549,24 +538,31 @@ const REPORT_PANELS = [
 
 /* ───────────────────────── Sumin coach bubble (pinned bottom, message per section) ───────────────────────── */
 
-function SuminBar({ message, visible }: { message: string; visible: boolean }) {
+function SuminBar({ num, title, message, visible }: { num: string; title: string; message: string; visible: boolean }) {
   return (
-    <div className="fixed left-1/2 z-50 w-full px-4" style={{ bottom: 80, maxWidth: 480, transform: "translateX(-50%)" }}>
+    <div className="fixed left-1/2 z-50 w-full px-4" style={{ bottom: 36, maxWidth: 480, transform: "translateX(-50%)" }}>
       <div
-        className="flex items-end gap-2.5 transition-all duration-300"
+        className="transition-all duration-300"
         style={{ opacity: visible ? 1 : 0, transform: `translateY(${visible ? 0 : 12}px)`, pointerEvents: visible ? "auto" : "none" }}
       >
-        <SuminAvatar size={56} />
-        <div
-          className="relative flex-1 rounded-[18px] rounded-bl-md bg-white px-4 py-3"
-          style={{ boxShadow: "0 6px 16px #2228331f, 0 12px 32px #22283326" }}
-        >
-          <span className="absolute -left-[6px] bottom-4 h-3 w-3 rotate-45 bg-white" aria-hidden />
-          <div className="text-mid-gray" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.04em" }}>
-            SUMIN · YOUR SKIN COACH
-          </div>
-          <div key={message} className="text-midnight guide-bar-enter" style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.4 }}>
-            {message}
+        {/* section title, moved down next to the coach bubble */}
+        <div key={title} className="text-center mb-3 guide-bar-enter">
+          <div className="text-mid-gray" style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.15em" }}>{num}</div>
+          <h3 className="font-display text-midnight" style={{ fontSize: 24, fontWeight: 500, lineHeight: 1.15 }}>{title}</h3>
+        </div>
+        <div className="flex items-end gap-2.5">
+          <SuminAvatar size={56} />
+          <div
+            className="relative flex-1 rounded-[18px] rounded-bl-md bg-white px-4 py-3"
+            style={{ boxShadow: "0 6px 16px #2228331f, 0 12px 32px #22283326" }}
+          >
+            <span className="absolute -left-[6px] bottom-4 h-3 w-3 rotate-45 bg-white" aria-hidden />
+            <div className="text-mid-gray" style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.04em" }}>
+              SUMIN · YOUR SKIN COACH
+            </div>
+            <div key={message} className="text-midnight guide-bar-enter" style={{ fontSize: 15, fontWeight: 500, lineHeight: 1.4 }}>
+              {message}
+            </div>
           </div>
         </div>
       </div>
@@ -577,7 +573,7 @@ function SuminBar({ message, visible }: { message: string; visible: boolean }) {
 /* ───────────────────────── Page ───────────────────────── */
 
 export default function Landing() {
-  const [activeMsg, setActiveMsg] = useState(REPORT_PANELS[0].message);
+  const [active, setActive] = useState(0);
   const [barVisible, setBarVisible] = useState(false);
   const refs = useRef<(HTMLElement | null)[]>([]);
 
@@ -589,7 +585,7 @@ export default function Landing() {
           const idx = refs.current.findIndex((r) => r === e.target);
           if (e.isIntersecting) {
             shown.add(e.target);
-            if (idx >= 0) setActiveMsg(REPORT_PANELS[idx].message);
+            if (idx >= 0) setActive(idx);
           } else {
             shown.delete(e.target);
           }
@@ -602,6 +598,8 @@ export default function Landing() {
     return () => obs.disconnect();
   }, []);
 
+  const a = REPORT_PANELS[active];
+
   return (
     <main
       className="mx-auto bg-white snap-y snap-mandatory"
@@ -609,12 +607,12 @@ export default function Landing() {
     >
       <Hero />
       <HowItWorks />
-      {REPORT_PANELS.map(({ id, num, title, Visual }, i) => (
-        <ReportPanel key={id} num={num} title={title} panelRef={(el) => { refs.current[i] = el; }}>
+      {REPORT_PANELS.map(({ id, Visual }, i) => (
+        <ReportPanel key={id} panelRef={(el) => { refs.current[i] = el; }}>
           <Visual />
         </ReportPanel>
       ))}
-      <SuminBar message={activeMsg} visible={barVisible} />
+      <SuminBar num={a.num} title={a.title} message={a.message} visible={barVisible} />
     </main>
   );
 }
