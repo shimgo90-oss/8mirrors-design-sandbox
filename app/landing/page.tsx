@@ -622,21 +622,71 @@ function EyeMaskFace({ size = 48 }: { size?: number }) {
 
 const PAYPAL_URL = "https://www.paypal.com/ncp/payment/NFWM2BSB77C86";
 
+const MENU: [string, string][] = [
+  ["About Us", "https://www.8-mirrors.com/post/8mirrors-your-go-to-skincare-guide-for-custom-skincare-routines"],
+  ["What You Get", "https://www.8-mirrors.com/post/8mirrors-what-you-get"],
+  ["How It Works", "https://www.8-mirrors.com/post/8mirrors-how-it-works"],
+  ["Before and Afters", "https://www.8-mirrors.com/post/8mirrors-before-afters"],
+  ["FAQs", "https://www.8-mirrors.com/post/8mirrors-faq-guide"],
+  ["Contact Us", "https://www.8-mirrors.com/post/8mirrors-contact-us"],
+];
+
 function Header() {
+  const [open, setOpen] = useState(false);
   return (
-    <header className="fixed top-0 inset-x-0 z-50">
+    <>
+      <header className="fixed top-0 inset-x-0 z-[55]">
+        <div
+          className="mx-auto flex items-center justify-between px-4"
+          style={{ maxWidth: 480, height: 52, background: "#ffffff", borderBottom: "1px solid #eee" }}
+        >
+          <Image src="/logo.png" alt="8mirrors" width={76} height={18} unoptimized priority style={{ height: 18, width: "auto" }} />
+          <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)} className="-mr-2 p-2">
+            {open ? (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M5 5l14 14M19 5L5 19" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            ) : (
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M3 6h18M3 12h18M3 18h18" stroke="#111" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* backdrop */}
       <div
-        className="mx-auto flex items-center justify-between px-4"
-        style={{ maxWidth: 480, height: 52, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(8px)", borderBottom: "1px solid #eee" }}
-      >
-        <Image src="/logo.png" alt="8mirrors" width={76} height={18} unoptimized priority style={{ height: 18, width: "auto" }} />
-        <button type="button" aria-label="Menu" className="-mr-2 p-2">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M3 6h18M3 12h18M3 18h18" stroke="#111" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
+        onClick={() => setOpen(false)}
+        className={`fixed inset-0 z-[53] bg-black/30 transition-opacity duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        aria-hidden
+      />
+
+      {/* slide-down menu (drops from behind the header bar) */}
+      <div className="fixed left-1/2 z-[54] w-full" style={{ top: 52, maxWidth: 480, transform: "translateX(-50%)" }}>
+        <nav
+          className={`bg-white border-b border-neutral-200 transition-transform duration-300 ease-out ${open ? "translate-y-0" : "-translate-y-[130%]"}`}
+          style={{ boxShadow: "0 14px 28px rgba(0,0,0,0.1)" }}
+        >
+          {MENU.map(([title, href], i) => (
+            <a
+              key={title}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-between px-5 py-4 text-midnight"
+              style={{ fontSize: 16, fontWeight: 500, borderBottom: i < MENU.length - 1 ? "1px solid #f0f0f0" : "none" }}
+            >
+              {title}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M9 6l6 6-6 6" stroke="#bbb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
+          ))}
+        </nav>
       </div>
-    </header>
+    </>
   );
 }
 
