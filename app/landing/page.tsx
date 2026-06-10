@@ -656,7 +656,7 @@ function TeamAvatars({ size = 48 }: { size?: number }) {
 function TeamSection() {
   const { t } = useI18n();
   return (
-    <section className="flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 120 }}>
+    <section className="flex flex-col items-center px-6 text-center" style={{ paddingTop: 56, paddingBottom: 56 }}>
       <Eyebrow>{t("team.eyebrow")}</Eyebrow>
       <div className="mt-6"><TeamAvatars size={74} /></div>
       <h2 className="font-display text-charcoal mt-7" style={{ fontSize: "clamp(26px, 7.5vw, 34px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-0.01em" }}>
@@ -696,7 +696,7 @@ function ReportArchiveSection() {
   const { t } = useI18n();
   const pages = [...REPORT_PAGES, ...REPORT_PAGES]; // duplicated for a seamless loop
   return (
-    <section className="flex flex-col justify-center overflow-hidden" style={{ minHeight: "100svh", paddingTop: 72, paddingBottom: 150 }}>
+    <section className="flex flex-col overflow-hidden" style={{ paddingTop: 56, paddingBottom: 56 }}>
       <div className="px-6 text-center">
         <Eyebrow>{t("full.eyebrow")}</Eyebrow>
         <h2 className="font-display text-charcoal mt-2" style={{ fontSize: "clamp(26px, 7.5vw, 34px)", fontWeight: 500, lineHeight: 1.15, letterSpacing: "-0.01em" }}>
@@ -849,7 +849,7 @@ function OfferSection() {
   const hair = { boxShadow: "inset 0 -1px 0 #f1f1f1" } as React.CSSProperties;
 
   return (
-    <section className="flex flex-col justify-center px-5" style={{ minHeight: "100svh", paddingTop: 56, paddingBottom: 40 }}>
+    <section className="flex flex-col px-5" style={{ paddingTop: 56, paddingBottom: 64 }}>
       <div className="text-center">
         <Eyebrow>CHOOSE YOUR PLAN</Eyebrow>
         <h2 className="font-display text-charcoal mt-1.5" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.01em" }}>
@@ -995,7 +995,7 @@ function StoryCard({ s }: { s: Story }) {
 
 function StoriesSection() {
   return (
-    <section className="flex flex-col justify-center" style={{ minHeight: "100svh", paddingTop: 52, paddingBottom: 116, background: "#f4f4f6" }}>
+    <section className="flex flex-col" style={{ paddingTop: 56, paddingBottom: 56, background: "#f4f4f6" }}>
       <div className="px-5 text-left">
         <Eyebrow>CUSTOMER STORIES</Eyebrow>
         <h2 className="font-display text-charcoal mt-1.5" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.01em" }}>
@@ -1351,37 +1351,6 @@ export default function Landing() {
   const [active, setActive] = useState(0);
   const [count, setCount] = useState(0);
   const [hideHeader, setHideHeader] = useState(false);
-
-  // Gentle "magnet": align the story section only when scrolling DOWN into it.
-  // Never fires on upward scroll, so leaving the section is always free.
-  useEffect(() => {
-    const main = mainRef.current;
-    if (!main) return;
-    const story = main.querySelector("[data-snap-story]") as HTMLElement | null;
-    if (!story) return;
-    let last = main.scrollTop;
-    let armed = true;
-    let t: ReturnType<typeof setTimeout>;
-    const onScroll = () => {
-      const cur = main.scrollTop;
-      const down = cur > last;
-      last = cur;
-      const vh = main.clientHeight;
-      const dist = story.getBoundingClientRect().top - main.getBoundingClientRect().top;
-      if (dist > vh * 0.75) armed = true; // re-arm once well above the story
-      if (down && armed && dist > 6 && dist < vh * 0.5) {
-        armed = false;
-        const target = cur + dist;
-        clearTimeout(t);
-        t = setTimeout(() => main.scrollTo({ top: target, behavior: "smooth" }), 70);
-      }
-    };
-    main.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      main.removeEventListener("scroll", onScroll);
-      clearTimeout(t);
-    };
-  }, []);
 
   // Hide the top bar when scrolling down, reveal when scrolling up or near the top.
   useEffect(() => {
