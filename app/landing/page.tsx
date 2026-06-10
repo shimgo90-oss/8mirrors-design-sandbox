@@ -274,43 +274,89 @@ function PlanCard() {
   );
 }
 
-// Full-screen Instagram-story for the 3 "what you get" frames (routine check / custom routine / plan).
+// Story frame visuals — only the custom-routine frame stays a block/card.
+function RoutineCheckFrame() {
+  return (
+    <div className="flex flex-col items-center">
+      <ScoreDonut score={72} size={168} />
+      <div className="mt-4" style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>Routine Score</div>
+      <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>Okay to Use 4 · Stop Using 2</div>
+    </div>
+  );
+}
+function PlanFrame() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex gap-2.5">
+        {["o1B2I", "caInY", "A9QXft"].map((id) => (
+          <div key={id} className="overflow-hidden rounded-md" style={{ width: 66, aspectRatio: "595 / 842", boxShadow: "0 6px 16px rgba(0,0,0,0.45)" }}>
+            <Image src={`/report/${id}.webp`} alt="" width={132} height={186} className="w-full h-full object-cover" unoptimized />
+          </div>
+        ))}
+      </div>
+      <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>One clear plan, to your inbox</div>
+    </div>
+  );
+}
+
+// Full-screen Instagram-story (dark, inset) for the 3 "what you get" frames.
 function WhatYouGetStory() {
   const { t } = useI18n();
   const N = HIW_STEPS.length;
   const [frame, setFrame] = useState(0);
+  const [fillW, setFillW] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const stop = () => { if (timer.current) clearInterval(timer.current); };
-  const start = () => { stop(); timer.current = setInterval(() => setFrame((f) => (f + 1) % N), 3200); };
-  useEffect(() => { start(); return stop; }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const start = () => { if (timer.current) clearInterval(timer.current); timer.current = setInterval(() => setFrame((f) => (f + 1) % N), 3600); };
+  useEffect(() => { start(); return () => { if (timer.current) clearInterval(timer.current); }; }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const go = (d: number) => { setFrame((f) => (f + d + N) % N); start(); };
 
-  const visuals = [<RoutineCheckCard key="rc" />, <RoutineCard key="r" />, <PlanCard key="p" />];
+  // progress gauge: animate fill 0 -> 100% each frame
+  useEffect(() => {
+    setFillW(0);
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setFillW(100)));
+    return () => cancelAnimationFrame(id);
+  }, [frame]);
+
+  // dissolve the dark panel in/out as it enters view
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.4 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const visuals = [<RoutineCheckFrame key="rc" />, <div key="r" style={{ width: 226 }}><RoutineCard /></div>, <PlanFrame key="p" />];
 
   return (
-    <section className="snap-start relative flex flex-col items-center justify-center overflow-hidden px-6 text-center" style={{ minHeight: "100svh", paddingTop: 96, paddingBottom: 140 }}>
-      {/* story progress segments */}
-      <div className="absolute left-0 right-0 flex gap-1 px-4" style={{ top: 64 }}>
-        {Array.from({ length: N }).map((_, i) => (
-          <div key={i} className="flex-1 overflow-hidden rounded-full" style={{ height: 3, background: "#e0e0e0" }}>
-            <div
-              key={i === frame ? `on-${frame}` : `off-${i}`}
-              style={{ height: "100%", background: "var(--color-mirror-cyan)", width: i < frame ? "100%" : "0%", animation: i === frame ? "storyfill 3200ms linear forwards" : "none" }}
-            />
-          </div>
-        ))}
-      </div>
+    <section ref={sectionRef} className="snap-start flex" style={{ minHeight: "100svh", paddingTop: 60, paddingBottom: 100, paddingLeft: 16, paddingRight: 16 }}>
+      <div
+        className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[28px] px-6 text-center"
+        style={{ background: "#121212", paddingTop: 56, paddingBottom: 40, opacity: visible ? 1 : 0, transition: "opacity 650ms ease" }}
+      >
+        {/* story progress segments — gauge fills up */}
+        <div className="absolute left-0 right-0 flex gap-1 px-5" style={{ top: 18 }}>
+          {Array.from({ length: N }).map((_, i) => (
+            <div key={i} className="flex-1 overflow-hidden rounded-full" style={{ height: 3, background: "rgba(255,255,255,0.22)" }}>
+              <div style={{ height: "100%", background: "var(--color-mirror-cyan)", width: i < frame ? "100%" : i === frame ? `${fillW}%` : "0%", transition: i === frame ? "width 3600ms linear" : "none" }} />
+            </div>
+          ))}
+        </div>
 
-      {/* tap zones: left = prev, right = next */}
-      <button aria-label="Previous" onClick={() => go(-1)} className="absolute inset-y-0 left-0 z-10" style={{ width: "32%" }} />
-      <button aria-label="Next" onClick={() => go(1)} className="absolute inset-y-0 right-0 z-10" style={{ width: "68%" }} />
+        {/* tap zones: left = prev, right = next */}
+        <button aria-label="Previous" onClick={() => go(-1)} className="absolute inset-y-0 left-0 z-10" style={{ width: "32%" }} />
+        <button aria-label="Next" onClick={() => go(1)} className="absolute inset-y-0 right-0 z-10" style={{ width: "68%" }} />
 
-      <div key={frame} className="guide-bar-enter flex flex-col items-center" style={{ pointerEvents: "none" }}>
-        <Eyebrow>{t("wyg.eyebrow")}</Eyebrow>
-        <h2 className="font-display text-charcoal mt-3" style={{ fontSize: "clamp(26px, 7.5vw, 32px)", fontWeight: 500, lineHeight: 1.2, whiteSpace: "pre-line", minHeight: 78, letterSpacing: "-0.01em" }}>
-          {HIW_STEPS[frame].title}
-        </h2>
-        <div className="mt-6" style={{ width: 220, height: 300 }}>{visuals[frame]}</div>
+        <div key={frame} className="guide-bar-enter flex flex-col items-center" style={{ pointerEvents: "none" }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", color: "rgba(255,255,255,0.55)" }}>{t("wyg.eyebrow")}</span>
+          <h2 className="font-display mt-3" style={{ fontSize: "clamp(26px, 7.5vw, 32px)", fontWeight: 500, lineHeight: 1.2, whiteSpace: "pre-line", minHeight: 78, letterSpacing: "-0.01em", color: "#ffffff" }}>
+            {HIW_STEPS[frame].title}
+          </h2>
+          <div className="mt-7">{visuals[frame]}</div>
+        </div>
       </div>
     </section>
   );
@@ -811,7 +857,7 @@ function StoriesSection() {
           Real skin, rebuilt in weeks
         </h2>
       </div>
-      <div className="no-scrollbar mt-5 flex gap-3 overflow-x-auto px-5 pb-2" style={{ scrollSnapType: "x mandatory" }}>
+      <div className="no-scrollbar mt-5 flex gap-3 overflow-x-auto px-5 pb-2" style={{ scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none" }}>
         {STORIES.map((s, i) => (
           <div key={i} style={{ scrollSnapAlign: "start" }}><StoryCard s={s} /></div>
         ))}
