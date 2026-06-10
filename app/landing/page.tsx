@@ -274,95 +274,43 @@ function PlanCard() {
   );
 }
 
-function HowItWorks() {
+// Full-screen Instagram-story for the 3 "what you get" frames (routine check / custom routine / plan).
+function WhatYouGetStory() {
   const { t } = useI18n();
-  const [step, setStep] = useState(0);
+  const N = HIW_STEPS.length;
+  const [frame, setFrame] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const stop = () => { if (timer.current) clearInterval(timer.current); };
-  const start = () => {
-    stop();
-    timer.current = setInterval(() => setStep((s) => (s + 1) % HIW_STEPS.length), 2200);
-  };
-  useEffect(() => { start(); return stop; }, []);
+  const start = () => { stop(); timer.current = setInterval(() => setFrame((f) => (f + 1) % N), 3200); };
+  useEffect(() => { start(); return stop; }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const go = (d: number) => { setFrame((f) => (f + d + N) % N); start(); };
 
-  const go = (dir: number) => {
-    setStep((s) => (s + dir + HIW_STEPS.length) % HIW_STEPS.length);
-    start(); // restart autoplay after a manual swipe
-  };
-
-  const dragX = useRef<number | null>(null);
-  const onDown = (x: number) => { dragX.current = x; };
-  const onUp = (x: number) => {
-    if (dragX.current === null) return;
-    const dx = x - dragX.current;
-    dragX.current = null;
-    if (dx < -40) go(1);
-    else if (dx > 40) go(-1);
-  };
-
-  const cards = [<RoutineCheckCard key="rc" />, <RoutineCard key="r" />, <PlanCard key="p" />];
+  const visuals = [<RoutineCheckCard key="rc" />, <RoutineCard key="r" />, <PlanCard key="p" />];
 
   return (
-    <section className="snap-start flex flex-col items-center justify-center px-5 text-center" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 140 }}>
-      <Eyebrow>{t("wyg.eyebrow")}</Eyebrow>
-      <h2
-        key={step}
-        className="font-display text-charcoal mt-2 guide-bar-enter"
-        style={{ fontSize: 26, fontWeight: 500, lineHeight: 1.25, minHeight: 76, whiteSpace: "pre-line" }}
-      >
-        {HIW_STEPS[step].title}
-      </h2>
-
-      <div
-        className="relative w-full touch-pan-y select-none"
-        style={{ height: 360, maxWidth: 360, cursor: "grab" }}
-        onTouchStart={(e) => onDown(e.touches[0].clientX)}
-        onTouchEnd={(e) => onUp(e.changedTouches[0].clientX)}
-        onPointerDown={(e) => onDown(e.clientX)}
-        onPointerUp={(e) => onUp(e.clientX)}
-      >
-        {cards.map((card, i) => {
-          const pos = (i - step + cards.length) % cards.length; // 0 = front
-          const dir = pos === 0 ? 0 : pos % 2 === 1 ? 1 : -1;
-          const depth = Math.ceil(pos / 2);
-          const transform =
-            pos === 0
-              ? "translate(0,0) rotate(0deg) scale(1)"
-              : `translate(${dir * 44}px, ${depth * 12}px) rotate(${dir * 5}deg) scale(${1 - depth * 0.07})`;
-          return (
+    <section className="snap-start relative flex flex-col items-center justify-center overflow-hidden px-6 text-center" style={{ minHeight: "100svh", paddingTop: 96, paddingBottom: 140 }}>
+      {/* story progress segments */}
+      <div className="absolute left-0 right-0 flex gap-1 px-4" style={{ top: 64 }}>
+        {Array.from({ length: N }).map((_, i) => (
+          <div key={i} className="flex-1 overflow-hidden rounded-full" style={{ height: 3, background: "#e0e0e0" }}>
             <div
-              key={i}
-              className="absolute transition-all duration-700 ease-[cubic-bezier(0.19,1,0.22,1)]"
-              style={{
-                width: 220,
-                height: 300,
-                left: "calc(50% - 110px)",
-                top: 30,
-                transform,
-                opacity: pos === 0 ? 1 : Math.max(0.2, 0.55 - (depth - 1) * 0.18),
-                zIndex: 30 - pos,
-              }}
-            >
-              {card}
-            </div>
-          );
-        })}
+              key={i === frame ? `on-${frame}` : `off-${i}`}
+              style={{ height: "100%", background: "var(--color-mirror-cyan)", width: i < frame ? "100%" : "0%", animation: i === frame ? "storyfill 3200ms linear forwards" : "none" }}
+            />
+          </div>
+        ))}
       </div>
 
-      <div className="flex items-center gap-1.5 mt-2">
-        {HIW_STEPS.map((_, i) => (
-          <span
-            key={i}
-            className="transition-all duration-300"
-            style={{
-              height: 6,
-              width: i === step ? 20 : 6,
-              borderRadius: 3,
-              background: i === step ? "var(--color-mirror-cyan)" : "#cccccc",
-            }}
-          />
-        ))}
+      {/* tap zones: left = prev, right = next */}
+      <button aria-label="Previous" onClick={() => go(-1)} className="absolute inset-y-0 left-0 z-10" style={{ width: "32%" }} />
+      <button aria-label="Next" onClick={() => go(1)} className="absolute inset-y-0 right-0 z-10" style={{ width: "68%" }} />
+
+      <div key={frame} className="guide-bar-enter flex flex-col items-center" style={{ pointerEvents: "none" }}>
+        <Eyebrow>{t("wyg.eyebrow")}</Eyebrow>
+        <h2 className="font-display text-charcoal mt-3" style={{ fontSize: "clamp(26px, 7.5vw, 32px)", fontWeight: 500, lineHeight: 1.2, whiteSpace: "pre-line", minHeight: 78, letterSpacing: "-0.01em" }}>
+          {HIW_STEPS[frame].title}
+        </h2>
+        <div className="mt-6" style={{ width: 220, height: 300 }}>{visuals[frame]}</div>
       </div>
     </section>
   );
@@ -863,7 +811,7 @@ function StoriesSection() {
           Real skin, rebuilt in weeks
         </h2>
       </div>
-      <div className="mt-5 flex gap-3 overflow-x-auto px-5 pb-2" style={{ scrollSnapType: "x mandatory" }}>
+      <div className="no-scrollbar mt-5 flex gap-3 overflow-x-auto px-5 pb-2" style={{ scrollSnapType: "x mandatory" }}>
         {STORIES.map((s, i) => (
           <div key={i} style={{ scrollSnapAlign: "start" }}><StoryCard s={s} /></div>
         ))}
@@ -1075,54 +1023,15 @@ function BuyBar() {
 
 /* ───────────────────────── Page ───────────────────────── */
 
-function StoryProgress({ count, active }: { count: number; active: number }) {
-  return (
-    <div className="fixed left-1/2 z-[52] w-full px-3" style={{ top: 56, maxWidth: 480, transform: "translateX(-50%)", pointerEvents: "none" }}>
-      <div className="flex gap-1">
-        {Array.from({ length: count }).map((_, i) => (
-          <div key={i} className="flex-1 overflow-hidden rounded-full" style={{ height: 3, background: "#e0e0e0" }}>
-            <div style={{ height: "100%", width: i <= active ? "100%" : "0%", background: "var(--color-mirror-cyan)", transition: "width 0.35s ease" }} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Landing() {
-  const mainRef = useRef<HTMLElement>(null);
-  const [active, setActive] = useState(0);
-  const [count, setCount] = useState(5);
-
-  useEffect(() => {
-    const main = mainRef.current;
-    if (!main) return;
-    const sections = Array.from(main.querySelectorAll(":scope > section")) as HTMLElement[];
-    setCount(sections.length);
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            const idx = sections.indexOf(e.target as HTMLElement);
-            if (idx >= 0) setActive(idx);
-          }
-        });
-      },
-      { root: main, threshold: 0.55 }
-    );
-    sections.forEach((s) => obs.observe(s));
-    return () => obs.disconnect();
-  }, []);
-
   return (
     <LocaleProvider>
       <Header />
-      <StoryProgress count={count} active={active} />
-      <main ref={mainRef} className="mx-auto bg-white snap-y snap-mandatory" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}>
+      <main className="mx-auto bg-white snap-y snap-mandatory" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}>
         <Hero />
+        <WhatYouGetStory />
         <TeamSection />
         <StoriesSection />
-        <HowItWorks />
         <OfferSection />
       </main>
       <BuyBar />

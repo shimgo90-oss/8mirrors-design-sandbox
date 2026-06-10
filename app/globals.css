@@ -91,6 +91,16 @@
   animation: marquee-left 36s linear infinite;
 }
 
+/* ───────── Landing: IG-style story progress fill ───────── */
+@keyframes storyfill {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* hide scrollbars on horizontal carousels */
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .snap-track-1, .snap-track-2, .target-card, .guide-bar-enter, .marquee-track { animation: none !important; }
 }
