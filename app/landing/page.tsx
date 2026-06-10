@@ -116,31 +116,29 @@ function StarRow({ rating = "4.8", count = "1,200+ reviews" }: { rating?: string
 function Hero() {
   const { t } = useI18n();
   return (
-    <section className="snap-start flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 140 }}>
+    <section className="snap-start flex flex-col items-center justify-center px-6 text-center" style={{ minHeight: "100svh", paddingTop: 96, paddingBottom: 140 }}>
       <h1 className="font-display text-charcoal" style={{ fontSize: "clamp(28px, 7.5vw, 38px)", lineHeight: 1.15, fontWeight: 500, letterSpacing: "-0.015em", maxWidth: 420 }}>
         {t("hero.titleA")}{" "}
         <span className="text-midnight" style={{ background: "var(--color-lumen-lime)", padding: "0 6px", borderRadius: 4 }}>
           {t("hero.titleB")}
         </span>
       </h1>
-      <p className="mt-4 text-mid-gray" style={{ fontSize: 16, lineHeight: 1.55, maxWidth: 380 }}>
+      <p className="mt-4 text-mid-gray" style={{ fontSize: 14, lineHeight: 1.5, maxWidth: 330 }}>
         {t("hero.sub")}
       </p>
 
-      {/* rolling animation — sits just above the CTA */}
-      <div className="rolling-mask w-full mt-8" style={{ maxWidth: 460 }}>
-        <div className="grid grid-cols-3 gap-3.5 overflow-visible" style={{ height: 150 }}>
+      <a href="#" className="mt-6 inline-flex items-center justify-center rounded-lg" style={{ background: "var(--color-mirror-cyan)", color: "#111111", padding: "15px 30px", fontSize: 16, fontWeight: 700 }}>
+        {t("bar.cta")}
+      </a>
+
+      {/* rolling animation (0.7×) */}
+      <div className="rolling-mask w-full mt-8" style={{ maxWidth: 322 }}>
+        <div className="grid grid-cols-3 gap-2.5 overflow-visible" style={{ height: 105 }}>
           <RollingColumn snap={1} />
           <RollingColumn snap={2} />
           <RollingColumn snap={1} />
         </div>
       </div>
-
-      <a href="#" className="mt-8 inline-flex items-center justify-center rounded-lg" style={{ background: "var(--color-mirror-cyan)", color: "#111111", padding: "15px 30px", fontSize: 16, fontWeight: 700 }}>
-        {t("hero.cta")}
-      </a>
-      <p className="mt-3 text-mid-gray" style={{ fontSize: 13 }}>{t("hero.micro")}</p>
-      <div className="mt-3"><StarRow count={t("trust.reviews")} /></div>
     </section>
   );
 }
@@ -1004,6 +1002,10 @@ function HowItWorksSheet({ open, onClose }: { open: boolean; onClose: () => void
               <span className="text-midnight" style={{ background: "var(--color-lumen-lime)", borderRadius: 4, padding: "2px 8px", fontSize: 12, fontWeight: 700, lineHeight: 1 }}>60% OFF</span>
             </div>
             <p className="text-mid-gray" style={{ fontSize: 14 }}>Skin Analysis &amp; Custom Routine — Phase 1</p>
+            <div className="mt-2 flex flex-col gap-1.5">
+              <div className="flex"><StarRow /></div>
+              <p className="text-mid-gray" style={{ fontSize: 12 }}>1 photo · 2 min · reviewed by Seoul experts</p>
+            </div>
           </div>
           <div className="h-px bg-neutral-200" />
           <div className="flex flex-col gap-3">
