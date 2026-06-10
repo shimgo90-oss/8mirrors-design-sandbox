@@ -385,7 +385,7 @@ function WhatYouGetStory() {
   const visuals = [<RoutineCard key="r" />, <SpectrumFrame key="sp" />, <RoutineCheckFrame key="rc" />];
 
   return (
-    <section ref={sectionRef} className="snap-start flex flex-col" style={{ minHeight: "100svh", paddingTop: 60, paddingBottom: 16, paddingLeft: 32, paddingRight: 32 }}>
+    <section ref={sectionRef} data-snap-story className="flex flex-col" style={{ minHeight: "100svh", paddingTop: 60, paddingBottom: 16, paddingLeft: 32, paddingRight: 32 }}>
       <div className="text-center text-charcoal" style={{ fontSize: 13, fontWeight: 700, letterSpacing: "0.14em", marginBottom: 14 }}>{t("wyg.eyebrow")}</div>
       <div
         onClick={(e) => {
@@ -918,12 +918,12 @@ const PRODUCT_SRC: Record<string, string> = {
 const AM_ROUTINE = ["cleanser", "toner", "serum", "cream", "sunscreen"];
 const PM_ROUTINE = ["cleanser", "toner", "serum", "cream"];
 
-function RoutineThumb({ kind }: { kind: string }) {
+function RoutineThumb({ kind, size = 28 }: { kind: string; size?: number }) {
   const src = PRODUCT_SRC[kind];
   return (
-    <div className="shrink-0 overflow-hidden rounded" style={{ width: 30, height: 30, background: "#fff", boxShadow: "inset 0 0 0 1px #e6e6e6" }}>
+    <div className="shrink-0 overflow-hidden rounded" style={{ width: size, height: size, background: "#fff", boxShadow: "inset 0 0 0 1px #e6e6e6" }}>
       {src ? (
-        <Image src={src} alt={kind} width={60} height={60} className="w-full h-full object-contain" style={{ padding: 2 }} unoptimized />
+        <Image src={src} alt={kind} width={size * 2} height={size * 2} className="w-full h-full object-contain" style={{ padding: 2 }} unoptimized />
       ) : (
         <div className="flex h-full w-full items-center justify-center" style={{ fontSize: 8, fontWeight: 700, color: "#9a9a9a" }}>SPF</div>
       )}
@@ -956,38 +956,37 @@ const STORIES: Story[] = [
 
 function StoryCard({ s }: { s: Story }) {
   return (
-    <article className="flex shrink-0 flex-col gap-2 rounded-2xl bg-white p-3" style={{ width: 268, boxShadow: "var(--shadow-card)" }}>
+    <article className="flex shrink-0 flex-col gap-2.5 rounded-2xl bg-white p-3" style={{ width: 272, boxShadow: "var(--shadow-card)" }}>
+      {/* who + quote */}
       <div className="flex flex-col gap-0.5">
         <p className="text-mid-gray" style={{ fontSize: 11 }}>{s.who}</p>
-        <p className="text-midnight" style={{ fontSize: 13, lineHeight: 1.4 }}>&ldquo;{s.quote}&rdquo;</p>
+        <p
+          className="text-midnight"
+          style={{ fontSize: 13, lineHeight: 1.4, minHeight: 36, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
+        >
+          &ldquo;{s.quote}&rdquo;
+        </p>
       </div>
 
-      <div className="overflow-hidden rounded-lg" style={{ height: 126, background: "#f0f0f0" }}>
+      {/* before / after */}
+      <div className="overflow-hidden rounded-lg" style={{ height: 112, background: "#f0f0f0" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={s.img} alt="Before and after" loading="lazy" className="w-full h-full object-cover" />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <span className="text-mid-gray" style={{ fontSize: 11, fontWeight: 600 }}>Concerns</span>
-        <div className="flex flex-wrap gap-1.5">
-          {s.concerns.map((c) => (
-            <span key={c} className="rounded-full bg-white text-midnight" style={{ fontSize: 10, fontWeight: 500, padding: "2px 8px", boxShadow: "inset 0 0 0 1px #e0e0e0" }}>{c}</span>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-1">
-        <span className="text-mid-gray" style={{ fontSize: 11, fontWeight: 600 }}>Goal</span>
-        {s.goals.map((g, i) => (
-          <p key={g} className="text-midnight" style={{ fontSize: 12, fontWeight: 500, lineHeight: 1.3 }}>{i + 1}. {g}</p>
+      {/* concern chips */}
+      <div className="flex flex-wrap gap-1.5">
+        {s.concerns.map((c) => (
+          <span key={c} className="rounded-full bg-white text-midnight" style={{ fontSize: 10, fontWeight: 500, padding: "2px 8px", boxShadow: "inset 0 0 0 1px #e0e0e0" }}>{c}</span>
         ))}
       </div>
 
+      {/* routine */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-mid-gray" style={{ fontSize: 11, fontWeight: 600 }}>Custom Routine</span>
-        <div className="flex flex-col gap-1.5 rounded-lg p-2.5" style={{ background: "var(--color-canvas)" }}>
-          <div className="flex items-center gap-1.5"><SunIcon />{AM_ROUTINE.map((k, i) => <RoutineThumb key={i} kind={k} />)}</div>
-          <div className="flex items-center gap-1.5"><MoonIcon />{PM_ROUTINE.map((k, i) => <RoutineThumb key={i} kind={k} />)}</div>
+        <span className="text-mid-gray" style={{ fontSize: 11, fontWeight: 600 }}>Custom routine</span>
+        <div className="flex flex-col gap-1.5 rounded-lg p-2" style={{ background: "var(--color-canvas)" }}>
+          <div className="flex items-center gap-1.5"><SunIcon />{AM_ROUTINE.map((k, i) => <RoutineThumb key={i} kind={k} size={26} />)}</div>
+          <div className="flex items-center gap-1.5"><MoonIcon />{PM_ROUTINE.map((k, i) => <RoutineThumb key={i} kind={k} size={26} />)}</div>
         </div>
       </div>
     </article>
@@ -1353,6 +1352,37 @@ export default function Landing() {
   const [count, setCount] = useState(0);
   const [hideHeader, setHideHeader] = useState(false);
 
+  // Gentle "magnet": align the story section only when scrolling DOWN into it.
+  // Never fires on upward scroll, so leaving the section is always free.
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+    const story = main.querySelector("[data-snap-story]") as HTMLElement | null;
+    if (!story) return;
+    let last = main.scrollTop;
+    let armed = true;
+    let t: ReturnType<typeof setTimeout>;
+    const onScroll = () => {
+      const cur = main.scrollTop;
+      const down = cur > last;
+      last = cur;
+      const vh = main.clientHeight;
+      const dist = story.getBoundingClientRect().top - main.getBoundingClientRect().top;
+      if (dist > vh * 0.75) armed = true; // re-arm once well above the story
+      if (down && armed && dist > 6 && dist < vh * 0.5) {
+        armed = false;
+        const target = cur + dist;
+        clearTimeout(t);
+        t = setTimeout(() => main.scrollTo({ top: target, behavior: "smooth" }), 70);
+      }
+    };
+    main.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      main.removeEventListener("scroll", onScroll);
+      clearTimeout(t);
+    };
+  }, []);
+
   // Hide the top bar when scrolling down, reveal when scrolling up or near the top.
   useEffect(() => {
     const main = mainRef.current;
@@ -1392,7 +1422,7 @@ export default function Landing() {
   return (
     <LocaleProvider>
       <Header hidden={hideHeader} />
-      <main ref={mainRef} className="mx-auto bg-white snap-y snap-proximity" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}>
+      <main ref={mainRef} className="mx-auto bg-white" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto" }}>
         <Hero />
         <WhatYouGetStory />
         <ReportArchiveSection />
