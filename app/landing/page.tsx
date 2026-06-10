@@ -287,14 +287,14 @@ function RoutineCheckFrame() {
 function PlanFrame() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="flex gap-2.5">
-        {["o1B2I", "caInY", "A9QXft"].map((id) => (
-          <div key={id} className="overflow-hidden rounded-md" style={{ width: 66, aspectRatio: "595 / 842", boxShadow: "0 6px 16px rgba(0,0,0,0.45)" }}>
-            <Image src={`/report/${id}.webp`} alt="" width={132} height={186} className="w-full h-full object-cover" unoptimized />
+      <div className="flex gap-3">
+        {["o1B2I", "caInY"].map((id) => (
+          <div key={id} className="overflow-hidden rounded-lg" style={{ width: 132, aspectRatio: "595 / 842", boxShadow: "0 10px 24px rgba(0,0,0,0.5)" }}>
+            <Image src={`/report/${id}.webp`} alt="" width={264} height={374} className="w-full h-full object-cover" unoptimized />
           </div>
         ))}
       </div>
-      <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>One clear plan, to your inbox</div>
+      <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12 }}>Your full plan, page by page</div>
     </div>
   );
 }
@@ -332,10 +332,10 @@ function WhatYouGetStory() {
   const visuals = [<RoutineCheckFrame key="rc" />, <div key="r" style={{ width: 226 }}><RoutineCard /></div>, <PlanFrame key="p" />];
 
   return (
-    <section ref={sectionRef} className="snap-start flex" style={{ minHeight: "100svh", paddingTop: 60, paddingBottom: 100, paddingLeft: 16, paddingRight: 16 }}>
+    <section ref={sectionRef} className="snap-start flex" style={{ minHeight: "100svh", paddingTop: 60, paddingBottom: 100, paddingLeft: 32, paddingRight: 32 }}>
       <div
         className="relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-[28px] px-6 text-center"
-        style={{ background: "#121212", paddingTop: 56, paddingBottom: 40, opacity: visible ? 1 : 0, transition: "opacity 650ms ease" }}
+        style={{ background: "#121212", paddingTop: 64, paddingBottom: 40, opacity: visible ? 1 : 0, transition: "opacity 650ms ease" }}
       >
         {/* story progress segments — gauge fills up */}
         <div className="absolute left-0 right-0 flex gap-1 px-5" style={{ top: 18 }}>
@@ -346,13 +346,17 @@ function WhatYouGetStory() {
           ))}
         </div>
 
+        {/* section title */}
+        <div className="absolute left-0 right-0 text-center" style={{ top: 34, color: "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, letterSpacing: "0.16em" }}>
+          {t("wyg.eyebrow")}
+        </div>
+
         {/* tap zones: left = prev, right = next */}
         <button aria-label="Previous" onClick={() => go(-1)} className="absolute inset-y-0 left-0 z-10" style={{ width: "32%" }} />
         <button aria-label="Next" onClick={() => go(1)} className="absolute inset-y-0 right-0 z-10" style={{ width: "68%" }} />
 
         <div key={frame} className="guide-bar-enter flex flex-col items-center" style={{ pointerEvents: "none" }}>
-          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", color: "rgba(255,255,255,0.55)" }}>{t("wyg.eyebrow")}</span>
-          <h2 className="font-display mt-3" style={{ fontSize: "clamp(26px, 7.5vw, 32px)", fontWeight: 500, lineHeight: 1.2, whiteSpace: "pre-line", minHeight: 78, letterSpacing: "-0.01em", color: "#ffffff" }}>
+          <h2 className="font-display" style={{ fontSize: "clamp(26px, 7.5vw, 32px)", fontWeight: 500, lineHeight: 1.2, whiteSpace: "pre-line", minHeight: 78, letterSpacing: "-0.01em", color: "#ffffff" }}>
             {HIW_STEPS[frame].title}
           </h2>
           <div className="mt-7">{visuals[frame]}</div>
@@ -1044,7 +1048,7 @@ function BuyBar() {
   return (
     <>
       <div className="fixed inset-x-0 bottom-0 z-50 pointer-events-none">
-        <div className="mx-auto w-full bg-white pointer-events-auto" style={{ maxWidth: 480, borderTop: "1px solid #e0e0e0", boxShadow: "0 -4px 16px rgba(0,0,0,0.06)" }}>
+        <div className="mx-auto w-full pointer-events-auto" style={{ maxWidth: 480, background: "linear-gradient(to top, #ffffff 58%, rgba(255,255,255,0.92) 78%, rgba(255,255,255,0) 100%)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", paddingTop: 8 }}>
           <div className="flex items-center justify-center gap-2 px-4 pt-3 text-mid-gray" style={{ fontSize: 12 }}>
             <span className="line-through">$24.99</span>
             <span className="text-midnight" style={{ fontSize: 16, fontWeight: 700 }}>$9.99</span>
