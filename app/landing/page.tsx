@@ -214,10 +214,24 @@ function KeywordsCard() {
   );
 }
 
-function RoutineThumbSquare({ size }: { size: number }) {
+const CAT_SRC: Record<string, string> = {
+  Cleanser: "/products/cleanser.png",
+  Toner: "/products/toner.png",
+  Serum: "/products/serum.png",
+  Moisturizer: "/products/cream.png",
+  "Eye cream": "/products/prod13.png",
+  Mask: "/products/prod6.png",
+};
+
+function RoutineThumbSquare({ size, cat }: { size: number; cat?: string }) {
+  const src = cat ? CAT_SRC[cat] : undefined;
   return (
-    <div className="shrink-0 rounded-md bg-neutral-100 border border-neutral-200 flex items-center justify-center" style={{ width: size, height: size }}>
-      <BottleIcon color="#cccccc" size={Math.round(size * 0.55)} />
+    <div className="shrink-0 overflow-hidden rounded-md bg-white flex items-center justify-center" style={{ width: size, height: size, boxShadow: "inset 0 0 0 1px #e6e6e6" }}>
+      {src ? (
+        <Image src={src} alt="" width={size * 2} height={size * 2} className="w-full h-full object-contain" style={{ padding: 2 }} unoptimized />
+      ) : (
+        <span style={{ fontSize: Math.round(size * 0.3), fontWeight: 700, color: "#9a9a9a" }}>SPF</span>
+      )}
     </div>
   );
 }
@@ -233,7 +247,7 @@ function RoutineMiniCard({ title, count, popular, items }: { title: string; coun
       <div className="mt-2.5 flex flex-col gap-2">
         {items.map(([step, cat]) => (
           <div key={step} className="flex items-center gap-2">
-            <RoutineThumbSquare size={28} />
+            <RoutineThumbSquare size={28} cat={cat} />
             <div className="flex flex-col text-left" style={{ lineHeight: 1.1 }}>
               <span className="text-midnight" style={{ fontSize: 11, fontWeight: 700 }}>{step}</span>
               <span className="text-mid-gray" style={{ fontSize: 8.5, fontWeight: 600, letterSpacing: "0.03em" }}>{cat}</span>
@@ -309,8 +323,8 @@ function RoutineCheckFrame() {
       <div className="overflow-hidden" style={{ width: 282, WebkitMaskImage: fade, maskImage: fade }}>
         <div className="flex gap-3" style={{ width: "max-content", animation: "marquee-left 16s linear infinite" }}>
           {row.map((ok, i) => (
-            <div key={i} className="relative shrink-0 flex items-center justify-center rounded-xl" style={{ width: 66, height: 66, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-              <BottleIcon color="rgba(255,255,255,0.5)" size={26} />
+            <div key={i} className="relative shrink-0 overflow-hidden rounded-xl bg-white" style={{ width: 66, height: 66 }}>
+              <Image src={ROLLING_PRODUCTS[i % ROLLING_PRODUCTS.length]} alt="" width={132} height={132} className="w-full h-full object-contain" style={{ padding: 7 }} unoptimized />
               <span className="absolute flex items-center justify-center rounded-full" style={{ right: -6, top: -6, width: 22, height: 22, background: ok ? "#1ec96b" : "#ff5a5a", color: "#fff", fontSize: 12, fontWeight: 700, border: "2px solid #121212" }}>{ok ? "✓" : "✕"}</span>
             </div>
           ))}
