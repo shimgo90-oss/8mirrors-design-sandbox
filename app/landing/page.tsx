@@ -1206,57 +1206,20 @@ const SUMMARY_BLOCKS: SummaryBlock[] = [
   { type: "li", text: "Full plan ($9.99) — complete routine, in-depth team analysis, treatment plan, full report PDF, plus 40% off your products with free worldwide shipping" },
 ];
 
-const SUMMARY_TOTAL = SUMMARY_BLOCKS.reduce((a, b) => a + b.text.length, 0);
-
-function TypeCursor() {
-  return (
-    <span
-      aria-hidden
-      style={{ display: "inline-block", width: 2, height: "1.05em", verticalAlign: "text-bottom", marginLeft: 2, background: "#62d8f4", animation: "blink 1s step-end infinite" }}
-    />
-  );
-}
+const SUMMARY_STAGGER = 0.13; // seconds between blocks dissolving in
 
 function HowItWorksSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [revealed, setRevealed] = useState(0);
-  const done = revealed >= SUMMARY_TOTAL;
+  const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!open) {
-      setRevealed(0);
+      setDone(false);
       return;
     }
-    setRevealed(0);
-    const start = setTimeout(() => {
-      const id = setInterval(() => {
-        setRevealed((n) => {
-          const next = n + 2;
-          if (next >= SUMMARY_TOTAL) {
-            clearInterval(id);
-            return SUMMARY_TOTAL;
-          }
-          return next;
-        });
-      }, 16);
-      // store on the closure so cleanup can clear it
-      cleanup = () => clearInterval(id);
-    }, 350); // brief "thinking" pause
-    let cleanup = () => {};
-    return () => {
-      clearTimeout(start);
-      cleanup();
-    };
+    const total = (0.15 + (SUMMARY_BLOCKS.length - 1) * SUMMARY_STAGGER + 0.5) * 1000;
+    const id = setTimeout(() => setDone(true), total);
+    return () => clearTimeout(id);
   }, [open]);
-
-  // map the global revealed-count onto each block
-  let acc = 0;
-  const rendered = SUMMARY_BLOCKS.map((b) => {
-    const startAt = acc;
-    acc += b.text.length;
-    const shown = Math.max(0, Math.min(b.text.length, revealed - startAt));
-    const active = revealed >= startAt && revealed < startAt + b.text.length;
-    return { ...b, shown, active };
-  }).filter((b) => b.shown > 0);
 
   return (
     <div
@@ -1267,7 +1230,6 @@ function HowItWorksSheet({ open, onClose }: { open: boolean; onClose: () => void
       <div
         className={`absolute bottom-0 inset-x-0 bg-white rounded-t-3xl overflow-y-auto transition-transform duration-300 ease-out ${open ? "translate-y-0" : "translate-y-full"}`}
         style={{ maxHeight: "88vh" }}
-        onClick={() => { if (!done) setRevealed(SUMMARY_TOTAL); }}
       >
         <div className="sticky top-0 bg-white pt-3 pb-2 flex justify-center"><div className="w-12 rounded-full bg-neutral-200" style={{ height: 6 }} /></div>
 
@@ -1281,45 +1243,45 @@ function HowItWorksSheet({ open, onClose }: { open: boolean; onClose: () => void
               <span className="text-midnight" style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.1 }}>AI summary</span>
               <span className="text-mid-gray" style={{ fontSize: 11, lineHeight: 1.2 }}>{done ? "Summarized this page" : "Reading this page…"}</span>
             </div>
-            <span className="ml-auto text-mid-gray" style={{ fontSize: 11 }}>{done ? "" : "tap to skip"}</span>
           </div>
 
-          {/* streamed answer */}
-          <div className="flex flex-col gap-3">
-            {rendered.map((b, i) => {
-              const txt = b.text.slice(0, b.shown);
+          {/* dissolve answer — each block fades up in sequence */}
+          <div key={open ? "open" : "closed"} className="flex flex-col gap-3">
+            {SUMMARY_BLOCKS.map((b, i) => {
+              const anim: React.CSSProperties = { animation: "aiFadeUp 0.5s ease-out both", animationDelay: `${0.15 + i * SUMMARY_STAGGER}s` };
               if (b.type === "h") {
                 return (
-                  <h3 key={i} className="text-mid-gray" style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 6 }}>
-                    {txt}{b.active && <TypeCursor />}
+                  <h3 key={i} className="text-mid-gray" style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", marginTop: 6, ...anim }}>
+                    {b.text}
                   </h3>
                 );
               }
               if (b.type === "li") {
                 return (
-                  <div key={i} className="flex items-start gap-2.5">
+                  <div key={i} className="flex items-start gap-2.5" style={anim}>
                     <span className="mt-2 shrink-0 rounded-full" style={{ width: 6, height: 6, background: "#62d8f4" }} />
-                    <p className="text-[#2a2a2a]" style={{ fontSize: 14.5, lineHeight: 1.5 }}>{txt}{b.active && <TypeCursor />}</p>
+                    <p className="text-[#2a2a2a]" style={{ fontSize: 14.5, lineHeight: 1.5 }}>{b.text}</p>
                   </div>
                 );
               }
               return (
-                <p key={i} className="text-[#1c1c1c]" style={{ fontSize: 15.5, lineHeight: 1.6 }}>{txt}{b.active && <TypeCursor />}</p>
+                <p key={i} className="text-[#1c1c1c]" style={{ fontSize: 15.5, lineHeight: 1.6, ...anim }}>{b.text}</p>
               );
             })}
           </div>
 
-          {/* CTAs appear once the summary finishes */}
-          {done && (
-            <div className="mt-7 flex flex-col gap-3" style={{ animation: "aiFadeUp 0.4s ease-out both" }}>
-              <a href="#" className="flex items-center justify-center rounded-lg text-midnight" style={{ height: 52, fontSize: 16, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
-                Try it free
-              </a>
-              <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="text-center text-mid-gray" style={{ fontSize: 13.5, fontWeight: 600 }}>
-                Or get the full plan · $9.99 →
-              </a>
-            </div>
-          )}
+          {/* CTAs fade in once the summary settles */}
+          <div
+            className="mt-7 flex flex-col gap-3"
+            style={{ opacity: done ? 1 : 0, transform: done ? "none" : "translateY(6px)", transition: "opacity 0.4s ease, transform 0.4s ease", pointerEvents: done ? "auto" : "none" }}
+          >
+            <a href="#" className="flex items-center justify-center rounded-lg text-midnight" style={{ height: 52, fontSize: 16, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
+              Try it free
+            </a>
+            <a href={PAYPAL_URL} target="_blank" rel="noopener noreferrer" className="text-center text-mid-gray" style={{ fontSize: 13.5, fontWeight: 600 }}>
+              Or get the full plan · $9.99 →
+            </a>
+          </div>
         </div>
       </div>
     </div>
