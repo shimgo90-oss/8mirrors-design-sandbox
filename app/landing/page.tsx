@@ -1266,25 +1266,25 @@ function EyeMaskTip({ visible }: { visible: boolean }) {
     <div
       style={{
         position: "absolute",
-        left: 4,
-        right: 4,
+        left: 16,
         bottom: "100%",
         marginBottom: 12,
+        maxWidth: 262,
         pointerEvents: "none",
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(8px)",
         transition: "opacity 0.28s ease, transform 0.28s ease",
       }}
     >
-      <div className="relative flex items-center gap-3 rounded-2xl bg-white p-3" style={{ boxShadow: "var(--shadow-card)" }}>
-        <EyeMaskFace size={42} />
+      <div className="relative flex items-center gap-2.5 rounded-2xl bg-white p-3" style={{ boxShadow: "var(--shadow-card)" }}>
+        <EyeMaskFace size={40} />
         <div className="flex flex-col">
-          <p className="text-midnight" style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.25 }}>Your eyes stay private</p>
-          <p className="text-mid-gray" style={{ fontSize: 12.5, lineHeight: 1.35 }}>We auto-blur them before you submit — only your skin team sees the photo.</p>
+          <p className="text-midnight" style={{ fontSize: 13.5, fontWeight: 700, lineHeight: 1.25 }}>Your eyes stay private</p>
+          <p className="text-mid-gray" style={{ fontSize: 12, lineHeight: 1.35 }}>Auto-blurred before you submit —<br />only your skin team sees it.</p>
         </div>
         <span
           aria-hidden
-          style={{ position: "absolute", left: 46, bottom: -5, width: 12, height: 12, background: "#fff", transform: "rotate(45deg)", boxShadow: "3px 3px 5px rgba(34,42,53,0.05)" }}
+          style={{ position: "absolute", left: 28, bottom: -5, width: 12, height: 12, background: "#fff", transform: "rotate(45deg)", boxShadow: "3px 3px 5px rgba(34,42,53,0.05)" }}
         />
       </div>
     </div>
@@ -1302,8 +1302,9 @@ function BuyBar({ show = true, tip = false }: { show?: boolean; tip?: boolean })
           <div className="pointer-events-auto" style={{ background: "#ffffff" }}>
             <div className="relative flex items-stretch gap-2 px-4 pt-3" style={{ paddingBottom: 16 }}>
               <EyeMaskTip visible={show && tip} />
-              <a href="#" className="flex flex-1 items-center justify-center rounded-lg px-4 py-3.5 text-midnight" style={{ fontSize: 15, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
-                {t("bar.cta")}
+              <a href="#" className="flex flex-1 flex-col items-center justify-center rounded-lg px-4 py-2.5 text-midnight" style={{ background: "var(--color-mirror-cyan)" }}>
+                <span style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.1 }}>{t("bar.cta")}</span>
+                <span style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.1, marginTop: 2, color: "rgba(17,17,17,0.62)" }}>1 photo · 2 min</span>
               </a>
               <button type="button" onClick={() => setOpen(true)} className="flex shrink-0 items-center justify-center gap-1 rounded-lg bg-white px-3 text-midnight" style={{ fontSize: 12, fontWeight: 600, boxShadow: "var(--shadow-card)" }}>
                 <AiIcon /> Summary
