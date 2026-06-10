@@ -767,44 +767,132 @@ function BeforeAfterSection() {
 
 /* ───────────────────────── Offer (anchored price) ───────────────────────── */
 
-function OfferSection() {
-  const { t } = useI18n();
+function PlanCheck({ on = true }: { on?: boolean }) {
   return (
-    <section className="snap-start flex flex-col justify-center px-6" style={{ minHeight: "100svh", paddingTop: 72, paddingBottom: 150 }}>
-      <Eyebrow>{t("offer.eyebrow")}</Eyebrow>
-      <h2 className="font-display text-charcoal mt-1.5" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.01em" }}>
-        {t("offer.titleA")} {t("offer.titleB")}
-      </h2>
+    <span
+      aria-hidden
+      className="mt-0.5 inline-flex shrink-0 items-center justify-center"
+      style={{ width: 17, height: 17, borderRadius: 999, background: on ? "#62d8f4" : "#ececec" }}
+    >
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+        <path d="M2.5 6.2 5 8.5l4.5-5" stroke={on ? "#111" : "#bdbdbd"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
 
-      <div className="mt-5 flex items-baseline gap-3">
-        <span className="font-display text-midnight" style={{ fontSize: 44, lineHeight: 1, letterSpacing: "-0.02em" }}>$9.99</span>
-        <span className="text-mid-gray line-through" style={{ fontSize: 15 }}>$24.99</span>
-        <span className="text-midnight" style={{ background: "var(--color-lumen-lime)", borderRadius: 4, padding: "3px 8px", fontSize: 12, fontWeight: 700, lineHeight: 1 }}>{t("offer.save")}</span>
+type Plan = {
+  name: string;
+  price: string;
+  oldPrice?: string;
+  cadence?: string;
+  tagline: string;
+  badge?: string;
+  features: string[];
+  ctaLabel: string;
+  ctaHref: string;
+  ctaNewTab?: boolean;
+  highlight?: boolean;
+};
+
+function PlanTierCard({ plan }: { plan: Plan }) {
+  return (
+    <div
+      className="flex flex-col rounded-2xl bg-white p-5"
+      style={{ boxShadow: plan.highlight ? "inset 0 0 0 1.5px #62d8f4, var(--shadow-card)" : "var(--shadow-card)" }}
+    >
+      <div className="flex items-center justify-between">
+        <span className="font-display text-charcoal" style={{ fontSize: 20, fontWeight: 500 }}>{plan.name}</span>
+        {plan.badge && (
+          <span className="text-white" style={{ background: "#242424", borderRadius: 999, padding: "3px 10px", fontSize: 11, fontWeight: 700, letterSpacing: "0.03em" }}>
+            {plan.badge}
+          </span>
+        )}
       </div>
 
-      <ul className="mt-5 flex flex-col gap-2.5">
-        {[t("offer.inc1"), t("offer.inc2"), t("offer.inc3"), t("offer.inc4")].map((item) => (
-          <li key={item} className="flex gap-2.5 text-[#444]" style={{ fontSize: 16, lineHeight: 1.5 }}>
-            <span style={{ color: "#62d8f4", fontWeight: 700 }}>✓</span>
-            <span>{item}</span>
+      <div className="mt-2 flex items-baseline gap-2">
+        <span className="font-display text-midnight" style={{ fontSize: 34, lineHeight: 1, letterSpacing: "-0.02em" }}>{plan.price}</span>
+        {plan.oldPrice && <span className="text-mid-gray line-through" style={{ fontSize: 14 }}>{plan.oldPrice}</span>}
+        {plan.cadence && <span className="text-mid-gray" style={{ fontSize: 13 }}>{plan.cadence}</span>}
+      </div>
+
+      <p className="text-mid-gray mt-1.5" style={{ fontSize: 13, lineHeight: 1.4 }}>{plan.tagline}</p>
+
+      <ul className="mt-4 flex flex-col gap-2">
+        {plan.features.map((f) => (
+          <li key={f} className="flex gap-2.5 text-[#3a3a3a]" style={{ fontSize: 13.5, lineHeight: 1.45 }}>
+            <PlanCheck />
+            <span>{f}</span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-6 flex items-center gap-3">
-        <EyeMaskFace size={44} />
-        <p className="text-mid-gray text-left" style={{ fontSize: 13, lineHeight: 1.4 }}>
-          {t("offer.privacyA")} <span className="text-midnight font-semibold">{t("offer.privacyB")}</span>{t("offer.privacyC")}
-        </p>
+      <a
+        href={plan.ctaHref}
+        {...(plan.ctaNewTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="mt-5 flex items-center justify-center rounded-lg text-midnight"
+        style={{ height: 50, fontSize: 15, fontWeight: 700, background: "var(--color-mirror-cyan)" }}
+      >
+        {plan.ctaLabel}
+      </a>
+    </div>
+  );
+}
+
+function OfferSection() {
+  const plans: Plan[] = [
+    {
+      name: "Free",
+      price: "$0",
+      tagline: "See where your skin stands in 2 minutes.",
+      features: [
+        "Submit 1 photo",
+        "Skin-condition graph + your concern keywords",
+        "Routine preview — Cleanser & Toner",
+      ],
+      ctaLabel: "Try it free",
+      ctaHref: "#",
+    },
+    {
+      name: "Full plan",
+      price: "$9.99",
+      oldPrice: "$24.99",
+      tagline: "Your skin, fully read and rebuilt by the 8mirrors team.",
+      badge: "BEST VALUE",
+      highlight: true,
+      features: [
+        "Submit 3 photos + in-depth questionnaire",
+        "Skin-condition graph + your concern keywords",
+        "Current routine product check",
+        "Your complete custom routine",
+        "In-depth skin analysis by the 8mirrors team",
+        "Treatment plan + full report PDF",
+        "40% off your full routine — free worldwide shipping",
+      ],
+      ctaLabel: "Get my full plan",
+      ctaHref: PAYPAL_URL,
+      ctaNewTab: true,
+    },
+  ];
+
+  return (
+    <section className="snap-start flex flex-col justify-center px-5" style={{ minHeight: "100svh", paddingTop: 64, paddingBottom: 56 }}>
+      <Eyebrow>CHOOSE YOUR PLAN</Eyebrow>
+      <h2 className="font-display text-charcoal mt-1.5" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.01em" }}>
+        Start free, or get the full plan
+      </h2>
+
+      <div className="mt-5 flex flex-col gap-3.5">
+        {plans.map((p) => (
+          <PlanTierCard key={p.name} plan={p} />
+        ))}
       </div>
 
-      {/* PLACEHOLDER testimonial — replace with a real review */}
-      <div className="mt-6 rounded-xl border border-neutral-200 p-4">
-        <StarRow count="verified customer" />
-        <p className="text-midnight mt-2" style={{ fontSize: 15, lineHeight: 1.5 }}>
-          &ldquo;My skin finally calmed down in a few weeks — the routine actually made sense for me.&rdquo;
+      <div className="mt-5 flex items-center gap-2.5">
+        <EyeMaskFace size={38} />
+        <p className="text-mid-gray text-left" style={{ fontSize: 12, lineHeight: 1.4 }}>
+          Your eyes are auto-masked. <span className="text-midnight font-semibold">Photos stay private</span> and are only seen by your skin team.
         </p>
-        <p className="text-mid-gray mt-1" style={{ fontSize: 13 }}>— Sarah J., verified customer</p>
       </div>
     </section>
   );
@@ -1128,11 +1216,13 @@ function BuyBar({ show = true }: { show?: boolean }) {
 export default function Landing() {
   const mainRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
     const sections = Array.from(main.querySelectorAll(":scope > section")) as HTMLElement[];
+    setCount(sections.length);
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -1159,7 +1249,7 @@ export default function Landing() {
         <StoriesSection />
         <OfferSection />
       </main>
-      <BuyBar show={active !== 0} />
+      <BuyBar show={active !== 0 && active !== count - 1} />
     </LocaleProvider>
   );
 }
