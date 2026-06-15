@@ -1367,7 +1367,8 @@ function Footer() {
 export function LandingExperience({
   sections = DEFAULT_ORDER,
   children,
-}: { sections?: SectionKey[]; children?: React.ReactNode } = {}) {
+  copy,
+}: { sections?: SectionKey[]; children?: React.ReactNode; copy?: Record<string, string> } = {}) {
   const mainRef = useRef<HTMLElement>(null);
   const [active, setActive] = useState(0);
   const [count, setCount] = useState(0);
@@ -1436,7 +1437,7 @@ export function LandingExperience({
   }, []);
 
   return (
-    <LocaleProvider>
+    <LocaleProvider overrides={copy}>
       <Header hidden={hideHeader} />
       <main ref={mainRef} className="mx-auto bg-white" style={{ maxWidth: 480, height: "100dvh", overflowY: "auto", overflowX: "hidden" }}>
         {children ??

@@ -18,5 +18,5 @@ export default async function LandingVariantPage({
     const Custom = v.Custom;
     return <Custom />;
   }
-  return <LandingExperience sections={v.sections} />;
+  return <LandingExperience sections={v.sections} copy={v.copy} />;
 }

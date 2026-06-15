@@ -266,7 +266,15 @@ const Ctx = createContext<{ locale: Locale; setLocale: (l: Locale) => void; t: (
   t: (k) => EN[k] ?? k,
 });
 
-export function LocaleProvider({ children }: { children: React.ReactNode }) {
+export function LocaleProvider({
+  children,
+  overrides,
+}: {
+  children: React.ReactNode;
+  /** Per-variant copy overrides (key → text). Marketer edits these in a variant
+   *  config — no React. An override wins over every locale's dictionary. */
+  overrides?: Record<string, string>;
+}) {
   const [locale, setLocale] = useState<Locale>("en");
   useEffect(() => {
     const saved = localStorage.getItem("8m-locale") as Locale | null;
@@ -276,7 +284,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     setLocale(l);
     localStorage.setItem("8m-locale", l);
   };
-  const t = (k: string) => STRINGS[locale][k] ?? EN[k] ?? k;
+  const t = (k: string) => overrides?.[k] ?? STRINGS[locale][k] ?? EN[k] ?? k;
   return <Ctx.Provider value={{ locale, setLocale: set, t }}>{children}</Ctx.Provider>;
 }
 
