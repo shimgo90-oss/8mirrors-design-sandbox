@@ -1,20 +1,9 @@
 @AGENTS.md
 
-# Design System
+# Claude 레인 메모
 
-All UI work in this sandbox MUST follow the 8mirrors design system at `/Users/yusim/Desktop/8m/DESIGN.md`.
+공유 브레인(서비스 맥락·디자인 시스템·2-에이전트 레인·배포 규칙)은 모두 위 `@AGENTS.md` + `context/` + [DESIGN.md](DESIGN.md)에 있다. Codex도 같은 내용을 본다.
 
-Read that file before generating or modifying any UI, and verify output against its Do's and Don'ts section.
+Claude는 **개발 레인** 담당 — React 컴포넌트, 새 섹션·커스텀 변형(`Custom`), 셸/스캐폴딩, 렌더 이슈. 마케터(Codex)가 조립할 **레고 블록**을 만든다.
 
-**Non-negotiable rules:**
-- **Display font**: Fraunces (loaded via `next/font/google` in [app/layout.tsx](app/layout.tsx), exposed as `--font-display`). Headings 20px+ only, weights 400–500.
-- **Body font**: Inter (exposed as `--font-body`).
-- **Primary accent**: Mirror Cyan `#62d8f4` — **always with black text (`#111111`)**, never white.
-- **Secondary accent**: Lumen Lime `#ecff8c` — **always with black text**, used as a highlighter (not a background fill). Max one highlighted phrase per section.
-- Mirror Cyan and Lumen Lime must **never** appear adjacent — keep 48px+ neutral space between them.
-- Use the multi-layer shadow stack (`var(--shadow-card)`, defined in [app/globals.css](app/globals.css)) for elevation, never CSS `border`.
-- No gradients, no glows, no extra brand colors.
-
-Design tokens live in [app/globals.css](app/globals.css) as Tailwind v4 `@theme` variables: `bg-mirror-cyan`, `text-charcoal`, `bg-lumen-lime`, `text-mid-gray`, `bg-canvas`, etc.
-
-A working reference implementation is at [app/design-test/page.tsx](app/design-test/page.tsx) — mirror its patterns for hero, cards, forms, and focus rings.
+UI를 만들거나 고친 뒤에는 [DESIGN.md](DESIGN.md)의 Do/Don't로 스스로 검수한다(스크린샷 → 대조 → 수정). 변형은 480폭 모바일 캔버스 기준으로 확인.
