@@ -840,10 +840,8 @@ const PLAN_ROWS: PlanRow[] = [
   { label: "Skin graph + keywords", free: true, full: true, box: true },
   { label: "Expert analysis + report", free: false, full: true, box: true },
   { label: "Custom AM & PM routine", free: "2 steps", full: "Full", box: "Full" },
-  { label: "K-beauty products", free: false, full: "40% off", box: "5 included" },
+  { label: "K-beauty products", free: false, full: false, box: "5 included" },
   { label: "Progress tracker", free: false, full: false, box: true },
-  { label: "Free worldwide shipping", free: false, full: false, box: true },
-  { label: "Routine adjustments", free: false, full: false, box: true },
 ];
 
 const LABEL_W = 82;
@@ -1308,12 +1306,12 @@ function BuyBar({ show = true }: { show?: boolean }) {
     <>
       <div className="fixed inset-x-0 bottom-0 z-50 pointer-events-none" style={{ opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(110%)", transition: "opacity 0.3s ease, transform 0.3s ease" }}>
         <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
-          <div style={{ height: 72, background: "linear-gradient(to top, #ffffff 60%, rgba(255,255,255,0))" }} />
+          <div style={{ height: 18, background: "linear-gradient(to top, #ffffff 55%, rgba(255,255,255,0))" }} />
           <div className="pointer-events-auto" style={{ background: "#ffffff" }}>
             {promo && (
-              <div className="text-center font-body text-mid-gray px-4" style={{ fontSize: 12, lineHeight: 1.4, paddingTop: 8 }}>{promo}</div>
+              <div className="text-center font-body text-mid-gray px-4" style={{ fontSize: 12, lineHeight: 1.4, paddingTop: 6 }}>{promo}</div>
             )}
-            <div className="flex items-stretch px-4" style={{ paddingTop: promo ? 8 : 12, paddingBottom: 16 }}>
+            <div className="flex items-stretch px-4" style={{ paddingTop: promo ? 7 : 10, paddingBottom: 12 }}>
               <a href={t("bar.href")} className="flex flex-1 items-center justify-center rounded-lg px-4 py-3.5 text-midnight" style={{ fontSize: 15, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
                 {t("bar.cta")}
               </a>

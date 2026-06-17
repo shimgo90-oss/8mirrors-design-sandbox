@@ -67,14 +67,6 @@ function VerifiedIcon() {
   );
 }
 
-function GuaranteeIcon() {
-  return (
-    <svg width={15} height={15} viewBox="0 0 24 24" fill="none" aria-hidden className="shrink-0">
-      <path d="M12 3l7 2.5v5c0 4.2-2.9 7.6-7 8.5-4.1-.9-7-4.3-7-8.5v-5L12 3Z" stroke="#62d8f4" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M9 12l2 2 4-4" stroke="#62d8f4" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 function CtaButton({ href = "#", children }: { href?: string; children: React.ReactNode }) {
   return (
@@ -409,13 +401,6 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
         </div>
         {c("hero.installment") && <p className="mt-1.5 font-body text-mid-gray" style={{ fontSize: 12.5 }}>{c("hero.installment")}</p>}
         <div className="mt-5"><CtaButton href={cta}>{c("hero.cta")}</CtaButton></div>
-        {c("hero.guarantee") && (
-          <div className="mt-3 flex items-center justify-center" style={{ gap: 6 }}>
-            <GuaranteeIcon />
-            <span className="font-body text-mid-gray" style={{ fontSize: 12.5 }}>{c("hero.guarantee")}</span>
-          </div>
-        )}
-        <p className="mt-2 text-center font-body text-mid-gray" style={{ fontSize: 12 }}>{c("hero.reassure")}</p>
       </div>
     </section>
   ),
@@ -641,8 +626,8 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
 
   faq: ({ c, L }) => (
     <section className={SECTIONcn} style={{ paddingTop: 20, paddingBottom: 28 }}>
-      <Eyebrow>{c("faq.eyebrow")}</Eyebrow>
-      <div className="mt-2 flex flex-col">
+      <h2 className="font-display text-charcoal" style={{ fontSize: 23, fontWeight: 500, lineHeight: 1.2, letterSpacing: "-0.01em" }}>{c("faq.eyebrow")}</h2>
+      <div className="mt-3 flex flex-col">
         {L.faq.map((f, i) => (<Accordion key={f.q + i} title={f.q}>{f.a}</Accordion>))}
       </div>
     </section>
