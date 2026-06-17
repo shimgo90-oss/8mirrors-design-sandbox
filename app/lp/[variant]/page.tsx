@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { LandingExperience } from "../../landing/page";
+import type { SectionKey } from "../../landing/page";
 import { VARIANTS, VARIANT_MAP } from "../../landing/_variants";
+import PdpTemplate from "../../landing/_tpl-pdp";
+import StoryTemplate from "../../landing/_tpl-story";
 
 export function generateStaticParams() {
   return VARIANTS.map((v) => ({ variant: v.slug }));
@@ -18,5 +21,11 @@ export default async function LandingVariantPage({
     const Custom = v.Custom;
     return <Custom />;
   }
-  return <LandingExperience sections={v.sections} copy={v.copy} />;
+  if (v.template === "pdp") {
+    return <PdpTemplate config={v} />;
+  }
+  if (v.template === "story") {
+    return <StoryTemplate config={v} />;
+  }
+  return <LandingExperience sections={v.sections as SectionKey[] | undefined} copy={v.copy} />;
 }

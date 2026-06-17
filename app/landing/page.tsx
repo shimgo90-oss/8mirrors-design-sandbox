@@ -1300,19 +1300,20 @@ function AiIcon() {
 function BuyBar({ show = true }: { show?: boolean }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
+  const promo = t("bar.promo");
   return (
     <>
       <div className="fixed inset-x-0 bottom-0 z-50 pointer-events-none" style={{ opacity: show ? 1 : 0, transform: show ? "translateY(0)" : "translateY(110%)", transition: "opacity 0.3s ease, transform 0.3s ease" }}>
         <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
-          <div style={{ height: 56, background: "linear-gradient(to top, #ffffff, rgba(255,255,255,0))" }} />
+          <div style={{ height: 72, background: "linear-gradient(to top, #ffffff 60%, rgba(255,255,255,0))" }} />
           <div className="pointer-events-auto" style={{ background: "#ffffff" }}>
-            <div className="flex items-stretch gap-2 px-4 pt-3" style={{ paddingBottom: 16 }}>
+            {promo && (
+              <div className="text-center font-body text-mid-gray px-4" style={{ fontSize: 12, lineHeight: 1.4, paddingTop: 8 }}>{promo}</div>
+            )}
+            <div className="flex items-stretch px-4" style={{ paddingTop: promo ? 8 : 12, paddingBottom: 16 }}>
               <a href="#" className="flex flex-1 items-center justify-center rounded-lg px-4 py-3.5 text-midnight" style={{ fontSize: 15, fontWeight: 700, background: "var(--color-mirror-cyan)" }}>
                 {t("bar.cta")}
               </a>
-              <button type="button" onClick={() => setOpen(true)} className="flex shrink-0 items-center justify-center gap-1 rounded-lg bg-white px-3 text-midnight" style={{ fontSize: 12, fontWeight: 600, boxShadow: "var(--shadow-card)" }}>
-                <AiIcon /> Summary
-              </button>
             </div>
           </div>
         </div>
@@ -1446,7 +1447,7 @@ export function LandingExperience({
             return <Section key={key} />;
           })}
       </main>
-      <BuyBar show={active > 0 && active < count - 2} />
+      <BuyBar show={active > 0 && active < count - 1} />
     </LocaleProvider>
   );
 }

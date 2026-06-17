@@ -56,6 +56,7 @@ const EN: Dict = {
   "bar.delivery": "4–5 day delivery",
   "bar.how": "How it works",
   "bar.cta": "Try it free",
+  "bar.promo": "",
 };
 
 const FR: Dict = {
