@@ -225,7 +225,7 @@ const SECTIONcn = "flex flex-col px-6";
 // Short by default. benefits / custom / results stay registered below — a marketer
 // re-adds any of them just by listing its key here.
 export const PDP_DEFAULT_SECTIONS = [
-  "hero", "info", "experts", "howto", "faq", "results", "reviews", "cta",
+  "hero", "info", "reviews", "howitworks", "howto", "results", "faq", "cta",
 ];
 
 export const PDP_DEFAULTS = {
@@ -253,6 +253,7 @@ export const PDP_DEFAULTS = {
     "description.body": "8mirrors builds a complete skincare routine made for your skin — not a one-size-fits-all kit. Tell us about your skin and send a photo; Seoul skin experts review it over 4–5 days and build your custom AM & PM routine of real K-beauty products, delivered to your door. It works for any skin type — oily, dry, sensitive or combination.",
     "info.benefitsNote": "No brand pays to be in your box — 682+ skins analyzed, $0 paid by brands. Just what's right for your skin.",
     "howto.eyebrow": "How to use",
+    "howitworks.eyebrow": "How it works",
     "experts.eyebrow": "Built by Seoul experts",
     "experts.title": "Every box is built by hand.",
     "experts.avatarsNote": "Your Seoul skin team",
@@ -307,9 +308,9 @@ export const PDP_DEFAULTS = {
     ],
     flow: [
       { t: "Tell us your skin", s: "Answer a few quick questions and send one photo." },
-      { t: "Experts read it", s: "Seoul skin pros review your skin over 4–5 days." },
-      { t: "We build & ship", s: "Your custom 5-step box, made for you, to your door." },
-      { t: "Track your results", s: "Log your routine and watch your skin improve week by week." },
+      { t: "Experts read your skin", s: "Seoul skin pros study your photo over 4–5 days — not an algorithm.", emph: "They write you a detailed analysis report" },
+      { t: "We build & ship your box", s: "Your custom 5-step routine, made for you and sent to your door." },
+      { t: "Track your results", s: "Log your routine and watch your skin improve, week by week." },
     ],
     howto: [
       { title: "Open your box", body: "Check your custom products and the progress tracker inside." },
@@ -410,7 +411,7 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
     </section>
   ),
 
-  info: ({ c, L }) => (
+  info: ({ c, L, img }) => (
     <section className={SECTIONcn} style={{ paddingTop: 22, paddingBottom: 8 }}>
       <div className="flex flex-col">
         <Accordion title={c("info.descriptionTitle")} defaultOpen>
@@ -450,6 +451,27 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
           </ul>
           <p className="font-body text-mid-gray" style={{ fontSize: 13, lineHeight: 1.55, marginTop: 12 }}>{c("info.benefitsNote")}</p>
         </Accordion>
+        <Accordion title={c("experts.eyebrow")}>
+          <div className="flex items-center" style={{ gap: 11 }}>
+            <div className="flex">
+              {["/team1.jpg", "/team2.jpg", "/sumin.jpg"].map((def, i) => (
+                <div key={i} className="rounded-full overflow-hidden bg-neutral-200" style={{ width: 44, height: 44, marginLeft: i > 0 ? -12 : 0, boxShadow: "0 0 0 2px #ffffff" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={img(`experts.${i}`) || def} alt="" className="h-full w-full object-cover" style={{ objectPosition: "center 25%" }} />
+                </div>
+              ))}
+            </div>
+            <span className="font-body text-mid-gray" style={{ fontSize: 12.5, lineHeight: 1.4 }}>{c("experts.avatarsNote")}</span>
+          </div>
+          <p className="font-body text-mid-gray" style={{ fontSize: 13.5, lineHeight: 1.6, marginTop: 12 }}>{c("experts.intro")}</p>
+          <div className="flex flex-wrap" style={{ gap: 8, marginTop: 12 }}>
+            {L.stats.map((s, i) => (
+              <span key={i} className="font-body" style={{ fontSize: 12.5, lineHeight: 1.3, background: "var(--color-canvas)", boxShadow: "var(--shadow-input-ring)", borderRadius: 8, padding: "6px 12px" }}>
+                <span className="text-charcoal" style={{ fontWeight: 700 }}>{s.big}</span> <span className="text-mid-gray">{s.sub}</span>
+              </span>
+            ))}
+          </div>
+        </Accordion>
       </div>
     </section>
   ),
@@ -463,42 +485,28 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
     </section>
   ),
 
-  experts: ({ c, img, L }) => (
+  howitworks: ({ c, L }) => (
     <section className={SECTIONcn} style={{ paddingTop: 26, paddingBottom: 28 }}>
-      <Eyebrow>{c("experts.eyebrow")}</Eyebrow>
-      <p className="mt-2 font-display text-charcoal" style={{ fontSize: 22, fontWeight: 500, lineHeight: 1.2 }}>{c("experts.title")}</p>
-      <div className="mt-4 flex items-center" style={{ gap: 11 }}>
-        <div className="flex">
-          {["/team1.jpg", "/team2.jpg", "/sumin.jpg"].map((def, i) => (
-            <div key={i} className="rounded-full overflow-hidden bg-neutral-200" style={{ width: 46, height: 46, marginLeft: i > 0 ? -12 : 0, boxShadow: "0 0 0 2px #ffffff" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img(`experts.${i}`) || def} alt="" className="h-full w-full object-cover" style={{ objectPosition: "center 25%" }} />
-            </div>
-          ))}
-        </div>
-        <span className="font-body text-mid-gray" style={{ fontSize: 12.5, lineHeight: 1.4 }}>{c("experts.avatarsNote")}</span>
-      </div>
-      <p className="mt-4 font-body text-mid-gray" style={{ fontSize: 13.5, lineHeight: 1.6, maxWidth: 400 }}>{c("experts.intro")}</p>
-      <div className="mt-4 flex flex-wrap" style={{ gap: 8 }}>
-        {L.stats.map((s, i) => (
-          <span key={i} className="font-body" style={{ fontSize: 12.5, lineHeight: 1.3, background: "var(--color-canvas)", boxShadow: "var(--shadow-input-ring)", borderRadius: 8, padding: "6px 12px" }}>
-            <span className="text-charcoal" style={{ fontWeight: 700 }}>{s.big}</span> <span className="text-mid-gray">{s.sub}</span>
-          </span>
-        ))}
-      </div>
-      <div className="mt-7">
-        <div className="font-body" style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-mid-gray)" }}>{c("experts.howTitle")}</div>
-        <div className="mt-3 flex flex-col" style={{ gap: 16 }}>
-          {L.flow.map((b, i) => (
-            <div key={i} className="flex items-start" style={{ gap: 13 }}>
-              <span className="shrink-0 flex items-center justify-center rounded-full font-body text-mid-gray" style={{ width: 28, height: 28, background: "var(--color-canvas)", fontSize: 13, fontWeight: 700, boxShadow: "var(--shadow-input-ring)" }}>{i + 1}</span>
-              <div>
-                <div className="font-body text-charcoal" style={{ fontSize: 15, fontWeight: 600, lineHeight: 1.3 }}>{b.t}</div>
-                <div className="font-body text-mid-gray" style={{ fontSize: 13, lineHeight: 1.45, marginTop: 1 }}>{b.s}</div>
+      <Eyebrow>{c("howitworks.eyebrow")}</Eyebrow>
+      <div className="mt-5 flex flex-col">
+        {L.flow.map((b, i) => {
+          const last = i === L.flow.length - 1;
+          return (
+            <div key={i} className="flex" style={{ gap: 14 }}>
+              <div className="flex flex-col items-center" style={{ width: 30 }}>
+                <span className="shrink-0 flex items-center justify-center rounded-full font-body text-charcoal" style={{ width: 30, height: 30, background: "var(--color-canvas)", fontSize: 13, fontWeight: 700, boxShadow: "var(--shadow-input-ring)" }}>{i + 1}</span>
+                {!last && <div style={{ flex: 1, width: 2, background: "#e7e4dd", marginTop: 6, marginBottom: 6, borderRadius: 1 }} />}
+              </div>
+              <div style={{ flex: 1, paddingBottom: last ? 0 : 22 }}>
+                <div className="font-body text-charcoal" style={{ fontSize: 15.5, fontWeight: 600, lineHeight: 1.3 }}>{b.t}</div>
+                <div className="font-body text-mid-gray" style={{ fontSize: 13.5, lineHeight: 1.5, marginTop: 2 }}>{b.s}</div>
+                {b.emph && (
+                  <span className="font-body text-midnight" style={{ display: "inline-block", marginTop: 9, background: "var(--color-lumen-lime)", padding: "4px 9px", borderRadius: 5, fontSize: 12.5, fontWeight: 600, lineHeight: 1.35 }}>{b.emph}</span>
+                )}
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </section>
   ),
