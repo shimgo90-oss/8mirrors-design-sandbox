@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { LandingExperience } from "./page";
+import { LandingExperience, Footer } from "./page";
 import type { LandingConfig } from "./_variants";
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -225,7 +225,7 @@ const SECTIONcn = "flex flex-col px-6";
 // Short by default. benefits / custom / results stay registered below — a marketer
 // re-adds any of them just by listing its key here.
 export const PDP_DEFAULT_SECTIONS = [
-  "hero", "info", "reviews", "howitworks", "howto", "results", "faq", "cta",
+  "hero", "info", "results", "howitworks", "howto", "faq", "reviews", "cta", "footer",
 ];
 
 export const PDP_DEFAULTS = {
@@ -254,7 +254,7 @@ export const PDP_DEFAULTS = {
     "info.benefitsNote": "No brand pays to be in your box — 682+ skins analyzed, $0 paid by brands. Just what's right for your skin.",
     "howto.eyebrow": "How to use",
     "howitworks.eyebrow": "How it works",
-    "experts.eyebrow": "Built by Seoul experts",
+    "experts.eyebrow": "Our Seoul experts",
     "experts.title": "Every box is built by hand.",
     "experts.avatarsNote": "Your Seoul skin team",
     "experts.intro": "Real skin experts from TheBom Studio in Myeongdong, Seoul read your skin and build your routine — no algorithm, no brand quotas. The same expert care, now shipped to you.",
@@ -633,6 +633,8 @@ const SECTIONS: Record<string, (ctx: Ctx) => React.ReactNode> = {
       </div>
     </section>
   ),
+
+  footer: () => <Footer />,
 };
 
 /* ── renderer ── */

@@ -1325,7 +1325,7 @@ function BuyBar({ show = true }: { show?: boolean }) {
 
 /* ───────────────────────── Footer ───────────────────────── */
 
-function Footer() {
+export function Footer() {
   return (
     <section className="flex flex-col" style={{ minHeight: "100svh", background: "#111111", paddingTop: 92, paddingBottom: 40, paddingLeft: 24, paddingRight: 24 }}>
       <Image
