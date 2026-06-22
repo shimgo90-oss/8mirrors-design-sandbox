@@ -84,10 +84,8 @@ export const VARIANTS: Variant[] = [
       "results.before": "/lp/box/results-before.jpg",
       "results.after": "/lp/box/results-after.jpg",
     },
-    // Stripe checkout — drives all 3 buy buttons (hero CTA, bottom CTA, sticky bar).
-    // ⚠️ TEST-MODE link for sandbox verification. Swap to the live link
-    //    (https://buy.stripe.com/6oU8wOgDu7sdcwS2je2wU03) before the production deploy.
-    links: { cta: "https://buy.stripe.com/test_3cIeVc0Ew7sd68u5vq2wU01" },
+    // Stripe checkout (LIVE) — drives all 3 buy buttons (hero CTA, bottom CTA, sticky bar).
+    links: { cta: "https://buy.stripe.com/6oU8wOgDu7sdcwS2je2wU03" },
     // A marketer clones this block, changes slug + note, then edits copy/images/links/lists/sections.
   },
   {

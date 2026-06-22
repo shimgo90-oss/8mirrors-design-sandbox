@@ -68,20 +68,16 @@ export async function POST(req: NextRequest) {
       `• Session: \`${s.id}\``,
     ].join("\n");
 
-    // TEMP DIAGNOSTIC: surface why Slack isn't firing in the Stripe response body.
-    if (!SLACK_WEBHOOK_URL) {
-      return new Response("ok (SLACK_WEBHOOK_URL is EMPTY in this build)", { status: 200 });
-    }
-    try {
-      const r = await fetch(SLACK_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      });
-      const t = await r.text();
-      return new Response(`ok (slack ${r.status}: ${t}) urlLen=${SLACK_WEBHOOK_URL.length}`, { status: 200 });
-    } catch (e) {
-      return new Response(`ok (slack fetch error: ${String(e)}) urlLen=${SLACK_WEBHOOK_URL.length}`, { status: 200 });
+    if (SLACK_WEBHOOK_URL) {
+      try {
+        await fetch(SLACK_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+      } catch {
+        // Never fail the webhook because Slack is down — Stripe would retry forever.
+      }
     }
   }
 
