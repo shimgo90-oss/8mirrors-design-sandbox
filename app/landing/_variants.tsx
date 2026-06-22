@@ -69,6 +69,8 @@ export const VARIANTS: Variant[] = [
     label: "Custom Routine Box — PDP",
     note: "Hypothesis: a transactional product-detail page (price + CTA up top, spec-style contents, star reviews, FAQ) converts the $119 box better than a story-led page. Skin-type-agnostic — fits any skin, not a single concern.",
     template: "pdp",
+    // PDP defaults minus "howto" — the How-to-use section is dropped for this variant.
+    sections: ["hero", "results", "info", "experts", "faq", "reviews", "footer"],
     images: {
       // gallery.0 = the lead hero shot (curated-routine moodboard). gallery.1..5 left as
       // placeholders for the per-step product category shots. Swap any in here.
@@ -78,6 +80,9 @@ export const VARIANTS: Variant[] = [
       "gallery.3": "/lp/box/gallery-new-4.jpg",
       "gallery.4": "/lp/box/gallery-new-5.jpg",
       "gallery.5": "/lp/box/gallery-new-6.jpg",
+      // Real customer before/after (Week 1 → Week 8) for the "Real results" section.
+      "results.before": "/lp/box/results-before.jpg",
+      "results.after": "/lp/box/results-after.jpg",
     },
     // A marketer clones this block, changes slug + note, then edits copy/images/links/lists/sections.
   },
