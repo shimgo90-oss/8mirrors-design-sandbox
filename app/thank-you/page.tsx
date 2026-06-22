@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 // Where customers go after a successful Stripe checkout. Set the Stripe Payment
 // Link's "After payment → redirect" to https://<domain>/thank-you (both test & live).
@@ -58,6 +59,28 @@ export default function ThankYou() {
         <p className="font-body" style={{ marginTop: 18, fontSize: 13.5, lineHeight: 1.5, color: "var(--color-mid-gray)" }}>
           Once you reply, our Korean experts review your skin over 4&ndash;5 days &mdash; then your box ships, free worldwide.
         </p>
+
+        {/* Secondary action — back to the product page (ring instead of border, not cyan: this is not the primary CTA) */}
+        <Link
+          href="/lp/box"
+          className="font-body"
+          style={{
+            marginTop: 28,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 10,
+            background: "#ffffff",
+            boxShadow: "inset 0 0 0 1px rgba(34,40,51,0.14), 0 1px 2px rgba(34,40,51,0.06)",
+            padding: "15px 22px",
+            fontSize: 16,
+            fontWeight: 700,
+            color: "var(--color-charcoal)",
+          }}
+        >
+          Back to the Custom Routine Box
+        </Link>
 
         <p className="font-body" style={{ marginTop: 22, fontSize: 13, lineHeight: 1.5, color: "var(--color-mid-gray)" }}>
           Didn&rsquo;t get the email? Check your spam folder, or reach us at{" "}
