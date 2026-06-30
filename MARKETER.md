@@ -26,7 +26,7 @@ How to run 8mirrors landing A/B tests with **almost no code**. Just follow the s
 ### Get the repo (once)
 VSCode → `Cmd+Shift+P` → **Git: Clone** → paste the URL below → log in when GitHub prompts:
 ```
-https://github.com/shimgo90-oss/8mirrors-design-sandbox.git
+https://github.com/shimgo90-oss/8m-landing.git
 ```
 Then, in the VSCode terminal (`Ctrl+\``), run once:
 ```bash
@@ -153,8 +153,8 @@ git add -A && git commit -m "variant: add glowup" && git push -u origin variant/
 Your local copy has drifted from the live site. Fastest fix — **re-clone fresh** (you lose only un-pushed local changes):
 ```bash
 cd ..                                  # leave the project folder
-# delete or rename the old 8mirrors-design-sandbox folder, then:
-git clone https://github.com/shimgo90-oss/8mirrors-design-sandbox.git
-cd 8mirrors-design-sandbox && npm install && npm run dev
+# delete or rename the old project folder, then:
+git clone https://github.com/shimgo90-oss/8m-landing.git
+cd 8m-landing && npm install && npm run dev
 ```
 (Or ask Codex: *"Hard-reset my local main to origin/main and start a fresh variant branch."*)

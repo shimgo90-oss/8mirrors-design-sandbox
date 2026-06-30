@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# oh-my-claudecode local state (never commit / never deploy)
+.omc/
+/public/.omc/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import "./globals.css";
 
 // GA4 measurement ID. One property tracks all pages (/, /landing, /lp/*) so
 // landing variants can be compared by page path. Override via env if it changes.
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-JK6D1ZR0YQ";
+
+// Microsoft Clarity project ID. Session recordings + heatmaps for all pages.
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID || "xezhjnp0ke";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -51,6 +55,13 @@ export default function RootLayout({
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body className="font-body antialiased">{children}</body>
       <GoogleAnalytics gaId={GA_ID} />
+      <Script id="ms-clarity" strategy="afterInteractive">
+        {`(function(c,l,a,r,i,t,y){
+          c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+          t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+          y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "${CLARITY_ID}");`}
+      </Script>
     </html>
   );
 }
